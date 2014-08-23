@@ -1,0 +1,13 @@
+[package]
+
+name = "neural"
+version = "0.0.1"
+authors = [ "jim@barkingmousestudio.com" ]
+
+[dependencies.wheel_timer]
+
+git = "https://github.com/BarkingMouseStudio/wheel-timer-rs.git"
+
+[lib]
+
+name = "neural"
