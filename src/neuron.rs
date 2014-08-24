@@ -1,79 +1,95 @@
+use identifier::Identifier;
+
 #[deriving(Show)]
-pub trait Neuron {
-  fn recv(&mut self, V: f64, now: u64) -> f64;
-  fn tick(&mut self, now: u64) -> f64;
+pub trait Neuron: Identifier {
+  fn recv(&mut self, v: f64) -> f64;
+  fn tick(&mut self) -> f64;
 }
 
-struct IzhikevichConfig {
-  V: f64,
-  U: f64,
-  a: f64,
-  b: f64,
-  c: f64,
-  d: f64
+pub struct IzhikevichConfig {
+  pub v: f64,
+  pub u: f64,
+  pub a: f64,
+  pub b: f64,
+  pub c: f64,
+  pub d: f64
 }
 
-struct IzhikevichNeuron {
+pub struct IzhikevichNeuron {
   // Membrane potential
-  V: f64,
+  v: f64,
 
   // Membrane recovery
-  U: f64,
+  u: f64,
 
   // Describes accumulated membrane potential before updating.
-  I: f64,
+  i: f64,
 
-  // Describes the time scale of the recovery variable `U`.
+  // Describes the time scale of the recovery variable `u`.
   // Smaller values result in slower recovery.
   // A typical value is `a := 0.02`.
   a: f64,
 
-  // Describes the sensitivity of the recovery variable `U`
-  // to the subthreshold fluctuations of the membrane potential `V`.
-  // Greater values couple `V` and more strongly resulting in possible
+  // Describes the sensitivity of the recovery variable `u`
+  // to the subthreshold fluctuations of the membrane potential `v`.
+  // Greater values couple `v` and more strongly resulting in possible
   // subthreshold oscillations and low-threshold spiking dynamics.
   // A typical value is `b = 0.2`.
   b: f64,
 
 
-  // Describes the after-spike reset value of the membrane potential `V`
+  // Describes the after-spike reset value of the membrane potential `v`
   // caused by the fast high-threshold K+ conductances.
   // A typical value is `c = -65mV`.
   c: f64,
 
-  // Describes the after-spike reset of the recovery variable `U` caused
+  // Describes the after-spike reset of the recovery variable `u` caused
   // by slow high-threshold Na+ and K+ conductances.
   // A typical value is `d = 2`.
-  d: f64
+  d: f64,
+
+  // Unique id within the network
+  id: u64,
 }
 
 impl IzhikevichNeuron {
   pub fn new(config: IzhikevichConfig) -> IzhikevichNeuron {
     return IzhikevichNeuron{
-      V: config.V,
-      U: config.U,
+      v: config.v,
+      u: config.u,
       a: config.a,
       b: config.b,
       c: config.c,
       d: config.d,
-      I: 0.0
+      i: 0.0,
+      id: 0
     }
+  }
+}
+
+impl Identifier for IzhikevichNeuron {
+  fn get_id(&self) -> u64 {
+    return self.id
+  }
+
+  fn set_id(&mut self, id: u64) {
+    self.id = id
   }
 }
 
 impl Neuron for IzhikevichNeuron {
 
-  fn recv(&mut self, V: f64, now: u64) -> f64 {
-    self.I = self.I + V;
-    self.I
+  fn recv(&mut self, v: f64) -> f64 {
+    self.i += v;
+    self.i
   }
 
-  fn tick(&mut self, now: u64) -> f64 {
+  fn tick(&mut self) -> f64 {
     // Handle spike
-    let ret: f64 = if self.V >= 30.0 {
-      self.V = self.c;
-      self.U += self.d;
-      self.V
+    let spike: f64 = if self.v >= 30.0 {
+      self.v = self.c;
+      self.u += self.d;
+      self.v
     } else {
       0.0
     };
@@ -82,11 +98,11 @@ impl Neuron for IzhikevichNeuron {
     // passage of time including the variable recovery factor
     // The recovery factor is updated according to the current
     // potential and itself
-    self.V += 0.5 * (0.04*(self.V*self.V) + 5.0*self.V + 140.0 - self.U + self.I);
-    self.V += 0.5 * (0.04*(self.V*self.V) + 5.0*self.V + 140.0 - self.U + self.I);
-    self.U += self.a * (self.b*self.V - self.U);
-    self.I = 0.0;
+    self.v += 0.5 * (0.04*(self.v*self.v) + 5.0*self.v + 140.0 - self.u + self.i);
+    self.v += 0.5 * (0.04*(self.v*self.v) + 5.0*self.v + 140.0 - self.u + self.i);
+    self.u += self.a * (self.b*self.v - self.u);
+    self.i = 0.0;
 
-    return ret
+    return spike
   }
 }

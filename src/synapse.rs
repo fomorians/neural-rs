@@ -1,7 +1,8 @@
 use trace::Trace;
+use identifier::Identifier;
 
 #[deriving(Show)]
-pub trait Synapse {
+pub trait Synapse: Identifier {
   fn pre_recv(&mut self, now: u64) -> f64;
   fn post_recv(&mut self, now: u64) -> f64;
   fn weight(&self) -> f64;
@@ -9,25 +10,25 @@ pub trait Synapse {
 }
 
 pub struct STDPConfig {
-  weight: f64,
-  min: f64,
-  max: f64,
-  n_pos: f64,
-  n_neg: f64,
+  pub weight: f64,
+  pub min: f64,
+  pub max: f64,
+  pub n_pos: f64,
+  pub n_neg: f64,
 
   // trace config
-  tau_pos: u64,
-  tau_neg: u64,
-  a_pos: f64,
-  a_neg: f64,
+  pub tau_pos: u64,
+  pub tau_neg: u64,
+  pub a_pos: f64,
+  pub a_neg: f64,
 
   // all-to-all vs. nearest-neighbor interactions
-  continuous: bool,
+  pub continuous: bool,
 
   // implement weight-dependent synaptic scaling
-  scale: bool,
+  pub scale: bool,
 
-  delay: uint
+  pub delay: uint
 }
 
 pub struct STDPSynapse {
@@ -47,7 +48,19 @@ pub struct STDPSynapse {
 
   delay: uint,
 
-  scale: bool
+  scale: bool,
+
+  id: u64,
+}
+
+impl Identifier for STDPSynapse {
+  fn get_id(&self) -> u64 {
+    return self.id
+  }
+
+  fn set_id(&mut self, id: u64) {
+    self.id = id
+  }
 }
 
 impl STDPSynapse {
@@ -64,10 +77,11 @@ impl STDPSynapse {
       scale: config.scale,
       min: config.min,
       max: config.max,
+      id: 0,
     }
   }
 
-  fn A_pos(&self) -> f64 {
+  fn a_pos(&self) -> f64 {
     return if self.scale {
       self.n_pos * (self.max - self.weight)
     } else {
@@ -75,7 +89,7 @@ impl STDPSynapse {
     }
   }
 
-  fn A_neg(&self) -> f64 {
+  fn a_neg(&self) -> f64 {
     return if self.scale {
       self.n_neg * (self.min - self.weight)
     } else {
@@ -102,7 +116,7 @@ impl Synapse for STDPSynapse {
     // weight is depressed at the moment of presynaptic spikes
     // by an amount proportional to the trace y left by previous
     // postsynaptic spikes
-    let delta = self.A_neg() * self.post_trace.read(now); // decay before using value
+    let delta = self.a_neg() * self.post_trace.read(now); // decay before using value
     self.weight = self.weight + delta;
     if self.weight > self.max {
       self.weight = self.max;
@@ -122,7 +136,7 @@ impl Synapse for STDPSynapse {
     // weight is increased at the moment of post-synaptic firing
     // by an amount that depends on the value of the trace x left
     // by the presynaptic spike.
-    let delta = self.A_pos() * self.pre_trace.read(now); // decay before using value
+    let delta = self.a_pos() * self.pre_trace.read(now); // decay before using value
     self.weight = self.weight + delta;
     if self.weight > self.max {
       self.weight = self.max;

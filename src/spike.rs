@@ -1,4 +1,4 @@
 pub struct Spike {
-  pub receiver: uint,
-  pub V: f64
+  pub receiver: u64,
+  pub v: f64
 }

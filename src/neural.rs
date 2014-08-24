@@ -1,5 +1,6 @@
-mod network;
-mod neuron;
-mod synapse;
+pub mod network;
+pub mod neuron;
+pub mod synapse;
+pub mod trace;
+mod identifier;
 mod spike;
-mod trace;
