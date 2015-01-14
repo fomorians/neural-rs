@@ -73,10 +73,9 @@ impl <'a> Network<'a> {
   pub fn tick(&mut self, tau: f64) -> u64 {
     // drain delayed neuronal firings
     for spike in self.scheduler.tick().iter() {
-      match self.neurons.get_mut(&spike.receiver) {
-        Some(neuron) => neuron.recv(spike.v),
-        None => 0f64,
-      };
+      if let Some(neuron) = self.neurons.get_mut(&spike.receiver) {
+        neuron.recv(spike.v)
+      }
     }
 
     // update neurons
@@ -86,40 +85,29 @@ impl <'a> Network<'a> {
         continue;
       }
 
-      match self.pre_synapses.get_mut(neuron_id) {
-        Some(pre_synapses) => {
-          for synapse_id in pre_synapses.iter() {
-            match self.synapses.get_mut(synapse_id) {
-              Some(synapse) => synapse.post_recv(self.now),
-              None => 0f64,
-            };
+      // if let?
+      if let Some(pre_synapses) = self.pre_synapses.get_mut(neuron_id) {
+        for synapse_id in pre_synapses.iter() {
+          if let Some(synapse) = self.synapses.get_mut(synapse_id) {
+            synapse.post_recv(self.now)
           }
-        },
-        None => (),
-      };
+        }
+      }
 
-      match self.post_synapses.get_mut(neuron_id) {
-        Some(post_synapses) => {
-          for synapse_id in post_synapses.iter() {
-            match self.synapses.get_mut(synapse_id) {
-              Some(synapse) => {
-                // XXX: Is this correct? Should this be updated post-scheduled?
-                synapse.pre_recv(self.now);
+      if let Some(post_synapses) = self.post_synapses.get_mut(neuron_id) {
+        for synapse_id in post_synapses.iter() {
+          if let Some(synapse) = self.synapses.get_mut(synapse_id) {
+            // XXX: Is this correct? Should this be updated post-scheduled?
+            synapse.pre_recv(self.now);
 
-                // TODO: Do I need to create a spike for every receiving synapse?
-                // Maybe just one per neuron and the "drain" iterates neuron targets.
-                let spike = Spike{
-                  receiver: *neuron_id,
-                  v:        synapse.weight(),
-                };
-                self.scheduler.schedule(synapse.delay(), spike);
-              },
-              None => (),
+            let spike = Spike{
+              receiver: *neuron_id,
+              v:        synapse.weight(),
             };
+            self.scheduler.schedule(synapse.delay(), spike);
           }
-        },
-        None => (),
-      };
+        }
+      }
     }
 
     self.now = self.now + 1;

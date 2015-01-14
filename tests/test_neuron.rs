@@ -21,8 +21,6 @@ fn run(t: Test) {
   let mut now = 0f64;
   let mut spikes = 0;
 
-  println!("{}", t.name);
-
   while now < t.timespan {
     let ip = (t.input)(now);
     neuron.recv(ip);
@@ -30,8 +28,6 @@ fn run(t: Test) {
     if neuron.tick(t.tau) > 0.0 {
       spikes = spikes + 1;
     }
-
-    println!("{}, {}, {}, {}", now, ip, neuron.v, neuron.u);
 
     now = now + t.tau;
   }
