@@ -2,9 +2,13 @@
 
 extern crate test;
 extern crate neural;
+extern crate csv;
 
 use std::default::Default;
 use std::num::Float;
+
+use std::io::FilePermission;
+use std::io::fs;
 
 use neural::Neuron;
 use neural::izhikevich::{IzhikevichNeuron, IzhikevichConfig};
@@ -23,6 +27,15 @@ fn run(t: Test) {
   let mut now = 0f64;
   let mut spikes = 0;
 
+  let path = Path::new(std::os::getcwd().unwrap())
+    .join("tests/results/");
+  fs::mkdir_recursive(&path, FilePermission::from_bits(0o777).unwrap()).ok();
+
+  let filepath = path.join(format!("{}.csv", t.name));
+
+  let mut writer = csv::Writer::from_file(&filepath);
+  writer.encode(("t", "I", "V")).ok();
+
   while now < t.timespan {
     let ip = (t.input)(now);
     neuron.recv(ip);
@@ -31,9 +44,12 @@ fn run(t: Test) {
       spikes = spikes + 1;
     }
 
+    writer.encode((now, ip, neuron.v)).ok();
+
     now = now + t.tau;
   }
 
+  println!("spikes: {}", spikes);
   assert!(spikes == t.spikes);
 }
 
@@ -42,11 +58,11 @@ fn default_neuron() {
   run(Test{
     name: "default",
     config: Default::default(),
-    timespan: 1000.0,
+    timespan: 100.0,
     tau: 1.0,
-    spikes: 65,
+    spikes: 9,
     input: &|t| {
-      if t > 0.0 {
+      if t > 10.0 {
         15.0
       } else {
         0.0
@@ -188,12 +204,12 @@ fn class2() {
     config: IzhikevichConfig::class2(),
     timespan: 300.0,
     tau: 0.25,
-    spikes: 15,
+    spikes: 14,
     input: &|t| {
       if t > 30.0 {
         -0.5 + (0.015 * (t - 30.0))
       } else {
-        0.5
+        -0.5
       }
     }
   });
@@ -334,9 +350,9 @@ fn bistability() {
     config: IzhikevichConfig::bistability(),
     timespan: 300.0,
     tau: 0.25,
-    spikes: 6,
+    spikes: 5,
     input: &|t| {
-      if (t > 38.0 && t < 43.0) || (t > 216.0 && t < 221.0) {
+      if (t > 37.5 && t < 42.5) || (t > 216.0 && t < 221.0) {
         1.24
       } else {
         0.24
@@ -370,14 +386,14 @@ fn accomodation() {
     config: IzhikevichConfig::accomodation(),
     timespan: 400.0,
     tau: 0.5,
-    spikes: 50,
+    spikes: 1,
     input: &|t| {
       if t < 200.0 {
         t / 25.0
       } else if t < 300.0 {
         0.0
       } else if t < 312.5 {
-        ((t as f64) - 300.0) / 12.5 * 4.0
+        (t - 300.0) / 12.5 * 4.0
       } else {
         0.0
       }

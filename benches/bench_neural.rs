@@ -1,3 +1,5 @@
+#![allow(unstable)]
+
 extern crate test;
 extern crate neural;
 

@@ -9,7 +9,8 @@ pub struct IzhikevichConfig {
   pub c: f64,
   pub d: f64,
   pub e: f64,
-  pub f: f64
+  pub f: f64,
+  pub is_accomodation: bool,
 }
 
 impl Copy for IzhikevichConfig {}
@@ -22,7 +23,7 @@ impl Default for IzhikevichConfig {
     let d = 2.0;
     let v = c;
     let u = b * v;
-    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0}
+    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0, is_accomodation: false}
   }
 }
 
@@ -35,7 +36,7 @@ impl IzhikevichConfig {
     let d = 8.0;
     let v = c;
     let u = b * v;
-    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0}
+    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0, is_accomodation: false}
   }
 
   pub fn fast_spiking() -> IzhikevichConfig {
@@ -45,7 +46,7 @@ impl IzhikevichConfig {
     let d = 2.0;
     let v = c;
     let u = b * v;
-    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0}
+    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0, is_accomodation: false}
   }
 
   pub fn tonic_spiking() -> IzhikevichConfig {
@@ -55,7 +56,7 @@ impl IzhikevichConfig {
     let d = 6.0;
     let v = -70.0;
     let u = b * v;
-    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0}
+    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0, is_accomodation: false}
   }
 
   pub fn phastic_spiking() -> IzhikevichConfig {
@@ -65,7 +66,7 @@ impl IzhikevichConfig {
     let d = 6.0;
     let v = -64.0;
     let u = b * v;
-    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0}
+    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0, is_accomodation: false}
   }
 
   pub fn tonic_bursting() -> IzhikevichConfig {
@@ -75,7 +76,7 @@ impl IzhikevichConfig {
     let d = 2.0;
     let v = -70.0;
     let u = b * v;
-    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0}
+    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0, is_accomodation: false}
   }
 
   pub fn phastic_bursting() -> IzhikevichConfig {
@@ -85,7 +86,7 @@ impl IzhikevichConfig {
     let d = 0.05;
     let v = -64.0;
     let u = b * v;
-    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0}
+    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0, is_accomodation: false}
   }
 
   pub fn mixed_mode() -> IzhikevichConfig {
@@ -95,7 +96,7 @@ impl IzhikevichConfig {
     let d = 4.0;
     let v = -70.0;
     let u = b * v;
-    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0}
+    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0, is_accomodation: false}
   }
 
   pub fn spike_frequency_adaptation() -> IzhikevichConfig {
@@ -105,7 +106,7 @@ impl IzhikevichConfig {
     let d = 8.0;
     let v = -70.0;
     let u = b * v;
-    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0}
+    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0, is_accomodation: false}
   }
 
   pub fn class1() -> IzhikevichConfig {
@@ -115,7 +116,7 @@ impl IzhikevichConfig {
     let d = 6.0;
     let v = -60.0;
     let u = b * v;
-    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 4.1, f: 108.0}
+    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 4.1, f: 108.0, is_accomodation: false}
   }
 
   pub fn class2() -> IzhikevichConfig {
@@ -125,7 +126,7 @@ impl IzhikevichConfig {
     let d = 0.0;
     let v = -64.0;
     let u = b * v;
-    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0}
+    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0, is_accomodation: false}
   }
 
   pub fn spike_latency() -> IzhikevichConfig {
@@ -135,7 +136,7 @@ impl IzhikevichConfig {
     let d = 6.0;
     let v = -70.0;
     let u = b * v;
-    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0}
+    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0, is_accomodation: false}
   }
 
   pub fn subthreshold_oscillation() -> IzhikevichConfig {
@@ -145,7 +146,7 @@ impl IzhikevichConfig {
     let d = 0.0;
     let v = -62.0;
     let u = b * v;
-    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0}
+    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0, is_accomodation: false}
   }
 
   pub fn resonator() -> IzhikevichConfig {
@@ -155,7 +156,7 @@ impl IzhikevichConfig {
     let d = -1.0;
     let v = -62.0;
     let u = b * v;
-    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0}
+    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0, is_accomodation: false}
   }
 
   pub fn integrator() -> IzhikevichConfig {
@@ -165,7 +166,7 @@ impl IzhikevichConfig {
     let d = 6.0;
     let v = -60.0;
     let u = b * v;
-    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 4.1, f: 108.0}
+    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 4.1, f: 108.0, is_accomodation: false}
   }
 
   pub fn rebound_spike() -> IzhikevichConfig {
@@ -175,7 +176,7 @@ impl IzhikevichConfig {
     let d = 4.0;
     let v = -64.0;
     let u = b * v;
-    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0}
+    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0, is_accomodation: false}
   }
 
   pub fn rebound_burst() -> IzhikevichConfig {
@@ -185,7 +186,7 @@ impl IzhikevichConfig {
     let d = 0.0;
     let v = -64.0;
     let u = b * v;
-    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0}
+    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0, is_accomodation: false}
   }
 
   pub fn threshold_variability() -> IzhikevichConfig {
@@ -195,7 +196,7 @@ impl IzhikevichConfig {
     let d = 4.0;
     let v = -64.0;
     let u = b * v;
-    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0}
+    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0, is_accomodation: false}
   }
 
   pub fn bistability() -> IzhikevichConfig {
@@ -205,7 +206,7 @@ impl IzhikevichConfig {
     let d = 0.0;
     let v = -61.0;
     let u = b * v;
-    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0}
+    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0, is_accomodation: false}
   }
 
   pub fn depolarizing_after_potential() -> IzhikevichConfig {
@@ -215,7 +216,7 @@ impl IzhikevichConfig {
     let d = -21.0;
     let v = -70.0;
     let u = b * v;
-    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0}
+    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0, is_accomodation: false}
   }
 
   pub fn accomodation() -> IzhikevichConfig {
@@ -225,7 +226,7 @@ impl IzhikevichConfig {
     let d = 4.0;
     let v = -65.0;
     let u = -16.0;
-    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0}
+    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0, is_accomodation: true}
   }
 
   pub fn inhibition_induced_spiking() -> IzhikevichConfig {
@@ -235,7 +236,7 @@ impl IzhikevichConfig {
     let d = 8.0;
     let v = -63.8;
     let u = b * v;
-    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0}
+    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0, is_accomodation: false}
   }
 
   pub fn inhibition_induced_bursting() -> IzhikevichConfig {
@@ -245,6 +246,6 @@ impl IzhikevichConfig {
     let d = -2.0;
     let v = -63.8;
     let u = b * v;
-    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0}
+    IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0, is_accomodation: false}
   }
 }

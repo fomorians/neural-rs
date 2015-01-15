@@ -40,6 +40,9 @@ pub struct IzhikevichNeuron {
   e: f64,
 
   f: f64,
+
+  // Special casing for accomodation model...
+  is_accomodation: bool,
 }
 
 impl Copy for IzhikevichNeuron {}
@@ -61,6 +64,7 @@ impl IzhikevichNeuron {
       d: config.d,
       e: config.e,
       f: config.f,
+      is_accomodation: config.is_accomodation,
       i: 0.0,
     }
   }
@@ -78,7 +82,13 @@ impl Neuron for IzhikevichNeuron {
     // The recovery factor is updated according to the current
     // potential and itself
     self.v += tau * (0.04 * (self.v * self.v) + self.e * self.v + self.f - self.u + self.i);
-    self.u += tau * self.a * (self.b * self.v - self.u);
+
+    self.u += if self.is_accomodation {
+      tau * self.a * (self.b * (self.v + 65.0))
+    } else {
+      tau * self.a * (self.b * self.v - self.u)
+    };
+
     self.i = 0.0;
 
     if self.v > 30.0 {
