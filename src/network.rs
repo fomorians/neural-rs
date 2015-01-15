@@ -17,11 +17,11 @@ pub struct Network<'a> {
   scheduler: wheel_timer::WheelTimer<Spike>,
 
   last_id: u64,
-  now: u64, // std::time::duration::Duration?
+  now: u64,
 }
 
 impl <'a> Network<'a> {
-  pub fn new(max_delay: uint) -> Network<'a> {
+  pub fn new(max_delay: usize) -> Network<'a> {
     return Network{
       neurons: HashMap::new(),
       synapses: HashMap::new(),
@@ -56,13 +56,13 @@ impl <'a> Network<'a> {
     self.synapses.insert(id, synapse);
 
     let pre_synapses = match self.pre_synapses.entry(a) {
-      Vacant(entry) => entry.set(Vec::new()),
+      Vacant(entry) => entry.insert(Vec::new()),
       Occupied(entry) => entry.into_mut(),
     };
     pre_synapses.push(id);
 
     let post_synapses = match self.post_synapses.entry(b) {
-      Vacant(entry) => entry.set(Vec::new()),
+      Vacant(entry) => entry.insert(Vec::new()),
       Occupied(entry) => entry.into_mut(),
     };
     post_synapses.push(id);
@@ -74,7 +74,7 @@ impl <'a> Network<'a> {
     // drain delayed neuronal firings
     for spike in self.scheduler.tick().iter() {
       if let Some(neuron) = self.neurons.get_mut(&spike.receiver) {
-        neuron.recv(spike.v)
+        neuron.recv(spike.v);
       }
     }
 
@@ -89,7 +89,7 @@ impl <'a> Network<'a> {
       if let Some(pre_synapses) = self.pre_synapses.get_mut(neuron_id) {
         for synapse_id in pre_synapses.iter() {
           if let Some(synapse) = self.synapses.get_mut(synapse_id) {
-            synapse.post_recv(self.now)
+            synapse.post_recv(self.now);
           }
         }
       }

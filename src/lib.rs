@@ -1,3 +1,6 @@
+#![allow(unstable)]
+#![allow(unused_attributes)]
+
 pub use self::network::Network;
 pub use self::neuron::Neuron;
 pub use self::synapse::Synapse;

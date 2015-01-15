@@ -20,8 +20,10 @@ pub struct STDPConfig {
   // implement weight-dependent synaptic scaling
   pub scale: bool,
 
-  pub delay: uint
+  pub delay: usize
 }
+
+impl Copy for STDPConfig {}
 
 impl Default for STDPConfig {
   fn default() -> STDPConfig {

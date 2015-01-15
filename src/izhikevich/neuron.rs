@@ -40,10 +40,9 @@ pub struct IzhikevichNeuron {
   e: f64,
 
   f: f64,
-
-  // Unique id within the network
-  id: u64,
 }
+
+impl Copy for IzhikevichNeuron {}
 
 impl Default for IzhikevichNeuron {
   fn default() -> IzhikevichNeuron {
@@ -63,7 +62,6 @@ impl IzhikevichNeuron {
       e: config.e,
       f: config.f,
       i: 0.0,
-      id: 0
     }
   }
 }

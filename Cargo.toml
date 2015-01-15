@@ -6,7 +6,7 @@ authors = [ "jim@barkingmousestudio.com" ]
 
 [dependencies]
 
-wheel_timer = "0.1.1"
+wheel_timer = "0.2.1"
 
 [lib]
 

@@ -18,12 +18,12 @@ pub struct STDPSynapse {
   a_pos: f64,
   a_neg: f64,
 
-  delay: uint,
+  delay: usize,
 
   scale: bool,
-
-  id: u64,
 }
+
+impl Copy for STDPSynapse {}
 
 impl STDPSynapse {
   pub fn new(config: STDPConfig) -> STDPSynapse {
@@ -39,7 +39,6 @@ impl STDPSynapse {
       scale: config.scale,
       min: config.min,
       max: config.max,
-      id: 0,
     }
   }
 
@@ -65,7 +64,7 @@ impl Synapse for STDPSynapse {
     self.weight
   }
 
-  fn delay(&self) -> uint {
+  fn delay(&self) -> usize {
     self.delay
   }
 

@@ -12,6 +12,8 @@ pub struct IzhikevichConfig {
   pub f: f64
 }
 
+impl Copy for IzhikevichConfig {}
+
 impl Default for IzhikevichConfig {
   fn default() -> IzhikevichConfig {
     let a = 0.02;

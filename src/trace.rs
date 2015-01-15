@@ -10,6 +10,8 @@ pub struct Trace {
   continuous: bool
 }
 
+impl Copy for Trace {}
+
 impl Trace {
 
   pub fn new(half_life: u64, continuous: bool) -> Trace {

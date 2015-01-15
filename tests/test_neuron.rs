@@ -1,3 +1,5 @@
+#![allow(unstable)]
+
 extern crate test;
 extern crate neural;
 
@@ -12,7 +14,7 @@ struct Test<'a> {
   timespan: f64,
   tau: f64,
   config: IzhikevichConfig,
-  input: |f64|:'a -> f64,
+  input: &'a (Fn(f64) -> f64 + 'a),
   spikes: u64,
 }
 
@@ -43,7 +45,7 @@ fn default_neuron() {
     timespan: 1000.0,
     tau: 1.0,
     spikes: 65,
-    input: |t| {
+    input: &|t| {
       if t > 0.0 {
         15.0
       } else {
@@ -61,7 +63,7 @@ fn tonic_spiking() {
     timespan: 100.0,
     tau: 0.25,
     spikes: 5,
-    input: |t| {
+    input: &|t| {
       if t > 10.0 {
         14.0
       } else {
@@ -79,7 +81,7 @@ fn phastic_spiking() {
     timespan: 200.0,
     tau: 0.25,
     spikes: 1,
-    input: |t| {
+    input: &|t| {
       if t > 20.0 {
         0.5
       } else {
@@ -97,7 +99,7 @@ fn tonic_bursting() {
     timespan: 220.0,
     tau: 0.25,
     spikes: 28,
-    input: |t| {
+    input: &|t| {
       if t > 22.0 {
         15.0
       } else {
@@ -115,7 +117,7 @@ fn phastic_bursting() {
     timespan: 200.0,
     tau: 0.2,
     spikes: 6,
-    input: |t| {
+    input: &|t| {
       if t > 20.0 {
         0.6
       } else {
@@ -133,7 +135,7 @@ fn mixed_mode() {
     timespan: 160.0,
     tau: 0.25,
     spikes: 6,
-    input: |t| {
+    input: &|t| {
       if t > 16.0 {
         10.0
       } else {
@@ -151,7 +153,7 @@ fn spike_frequency_adaptation() {
     timespan: 85.0,
     tau: 0.25,
     spikes: 6,
-    input: |t| {
+    input: &|t| {
       if t > 8.0 {
         30.0
       } else {
@@ -169,7 +171,7 @@ fn class1() {
     timespan: 300.0,
     tau: 0.25,
     spikes: 10,
-    input: |t| {
+    input: &|t| {
       if t > 30.0 {
         0.075 * (t - 30.0)
       } else {
@@ -187,7 +189,7 @@ fn class2() {
     timespan: 300.0,
     tau: 0.25,
     spikes: 15,
-    input: |t| {
+    input: &|t| {
       if t > 30.0 {
         -0.5 + (0.015 * (t - 30.0))
       } else {
@@ -205,7 +207,7 @@ fn spike_latency() {
     timespan: 100.0,
     tau: 0.2,
     spikes: 1,
-    input: |t| {
+    input: &|t| {
       if t > 10.0 && t < 13.0 {
         7.04
       } else {
@@ -223,7 +225,7 @@ fn subthreshold_oscillation() {
     timespan: 200.0,
     tau: 0.25,
     spikes: 1,
-    input: |t| {
+    input: &|t| {
       if t > 20.0 && t < 25.0 {
         2.0
       } else {
@@ -241,7 +243,7 @@ fn resonator() {
     timespan: 400.0,
     tau: 0.25,
     spikes: 1,
-    input: |t| {
+    input: &|t| {
       if (t > 40.0 && t < 44.0) || (t > 60.0 && t < 64.0) || (t > 280.0 && t < 284.0) || (t > 320.0 && t < 324.0) {
         0.65
       } else {
@@ -259,7 +261,7 @@ fn integrator() {
     timespan: 100.0,
     tau: 0.25,
     spikes: 1,
-    input: |t| {
+    input: &|t| {
       if (t > 9.09 && t < 11.09) || (t > 14.09 && t < 16.09) || (t > 70.0 && t < 72.0) || (t > 80.0 && t < 82.0) {
         9.0
       } else {
@@ -277,7 +279,7 @@ fn rebound_spike() {
     timespan: 200.0,
     tau: 0.2,
     spikes: 1,
-    input: |t| {
+    input: &|t| {
       if t > 20.0 && t < 25.0 {
         -15.0
       } else {
@@ -295,7 +297,7 @@ fn rebound_burst() {
     timespan: 200.0,
     tau: 0.2,
     spikes: 7,
-    input: |t| {
+    input: &|t| {
       if t > 20.0 && t < 25.0 {
         -15.0
       } else {
@@ -313,7 +315,7 @@ fn threshold_variability() {
     timespan: 100.0,
     tau: 0.25,
     spikes: 1,
-    input: |t| {
+    input: &|t| {
       if (t > 10.0 && t < 15.0) || (t > 80.0 && t < 85.0) {
         1.0
       } else if t > 70.0 && t < 75.0 {
@@ -333,7 +335,7 @@ fn bistability() {
     timespan: 300.0,
     tau: 0.25,
     spikes: 6,
-    input: |t| {
+    input: &|t| {
       if (t > 38.0 && t < 43.0) || (t > 216.0 && t < 221.0) {
         1.24
       } else {
@@ -351,7 +353,7 @@ fn depolarizing_after_potential() {
     timespan: 50.0,
     tau: 0.1,
     spikes: 1,
-    input: |t| {
+    input: &|t| {
       if (t - 10.0).abs() < 1.0 {
         20.0
       } else {
@@ -369,7 +371,7 @@ fn accomodation() {
     timespan: 400.0,
     tau: 0.5,
     spikes: 50,
-    input: |t| {
+    input: &|t| {
       if t < 200.0 {
         t / 25.0
       } else if t < 300.0 {
@@ -391,7 +393,7 @@ fn inhibition_induced_spiking() {
     timespan: 350.0,
     tau: 0.5,
     spikes: 3,
-    input: |t| {
+    input: &|t| {
       if t < 50.0 || t > 250.0 {
         80.0
       } else {
@@ -409,7 +411,7 @@ fn inhibition_induced_bursting() {
     timespan: 350.0,
     tau: 0.5,
     spikes: 12,
-    input: |t| {
+    input: &|t| {
       if t < 50.0 || t > 250.0 {
         80.0
       } else {
