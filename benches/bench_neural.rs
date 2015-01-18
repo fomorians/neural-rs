@@ -6,10 +6,10 @@ extern crate neural;
 use test::Bencher;
 
 use std::default::Default;
+use std::num::Float;
 use std::rand;
 use std::rand::Rng;
 use std::rand::distributions::{Normal, IndependentSample};
-use std::num::Float;
 
 use neural::Network;
 use neural::izhikevich::{IzhikevichNeuron, IzhikevichConfig};
@@ -17,7 +17,7 @@ use neural::stdp::{STDPSynapse, STDPConfig};
 
 #[bench]
 fn spikes(bn: &mut Bencher) {
-  let mut rng = rand::task_rng();
+  let mut rng = rand::thread_rng();
   let mut network = Network::new(20);
 
   let excitatory_count = 800u64;

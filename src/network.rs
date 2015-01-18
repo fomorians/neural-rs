@@ -85,7 +85,6 @@ impl <'a> Network<'a> {
         continue;
       }
 
-      // if let?
       if let Some(pre_synapses) = self.pre_synapses.get_mut(neuron_id) {
         for synapse_id in pre_synapses.iter() {
           if let Some(synapse) = self.synapses.get_mut(synapse_id) {
