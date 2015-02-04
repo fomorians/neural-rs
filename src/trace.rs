@@ -2,15 +2,13 @@
 // at any point in the future to get its discrete decayed valued.
 use std::num::Float;
 
-#[deriving(Show, Copy)]
+#[derive(Debug, Copy)]
 pub struct Trace {
   value: f64,
   last_time: u64,
   half_life: u64,
   continuous: bool
 }
-
-impl Copy for Trace {}
 
 impl Trace {
 

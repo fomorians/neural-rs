@@ -1,4 +1,4 @@
-#[deriving(Show, Copy)]
+#[derive(Debug, Copy)]
 pub struct Spike {
   pub receiver: u64,
   pub v: f64

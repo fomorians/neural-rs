@@ -1,6 +1,6 @@
 use std::default::Default;
 
-#[deriving(Show, Copy)]
+#[derive(Debug, Copy)]
 pub struct STDPConfig {
   pub weight: f64,
   pub min: f64,
@@ -22,8 +22,6 @@ pub struct STDPConfig {
 
   pub delay: usize
 }
-
-impl Copy for STDPConfig {}
 
 impl Default for STDPConfig {
   fn default() -> STDPConfig {

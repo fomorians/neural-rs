@@ -1,6 +1,6 @@
 use std::default::Default;
 
-#[deriving(Show, Copy)]
+#[derive(Debug, Copy)]
 pub struct IzhikevichConfig {
   pub v: f64,
   pub u: f64,
@@ -12,8 +12,6 @@ pub struct IzhikevichConfig {
   pub f: f64,
   pub is_accomodation: bool,
 }
-
-impl Copy for IzhikevichConfig {}
 
 impl Default for IzhikevichConfig {
   fn default() -> IzhikevichConfig {

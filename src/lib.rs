@@ -1,5 +1,7 @@
-#![allow(unstable)]
 #![allow(unused_attributes)]
+
+#![feature(core)]
+#![feature(std_misc)]
 
 pub use self::network::Network;
 pub use self::neuron::Neuron;

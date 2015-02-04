@@ -3,7 +3,7 @@ use std::default::Default;
 use neuron::Neuron;
 use izhikevich::config::IzhikevichConfig;
 
-#[deriving(Show, Copy)]
+#[derive(Debug, Copy)]
 pub struct IzhikevichNeuron {
   // Membrane potential
   pub v: f64,
@@ -44,8 +44,6 @@ pub struct IzhikevichNeuron {
   // Special casing for accomodation model...
   is_accomodation: bool,
 }
-
-impl Copy for IzhikevichNeuron {}
 
 impl Default for IzhikevichNeuron {
   fn default() -> IzhikevichNeuron {

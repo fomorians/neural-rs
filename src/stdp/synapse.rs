@@ -2,7 +2,7 @@ use synapse::Synapse;
 use trace::Trace;
 use stdp::config::STDPConfig;
 
-#[deriving(Show, Copy)]
+#[derive(Debug, Copy)]
 pub struct STDPSynapse {
   weight: f64,
 
@@ -22,8 +22,6 @@ pub struct STDPSynapse {
 
   scale: bool,
 }
-
-impl Copy for STDPSynapse {}
 
 impl STDPSynapse {
   pub fn new(config: STDPConfig) -> STDPSynapse {
