@@ -2,6 +2,7 @@ extern crate wheel_timer;
 
 use std::collections::HashMap;
 use std::collections::hash_map::Entry::{Vacant, Occupied};
+use std::collections::Bitv;
 
 use neuron::Neuron;
 use synapse::Synapse;
@@ -16,7 +17,8 @@ pub struct Network<'a> {
 
   scheduler: wheel_timer::WheelTimer<Spike>,
 
-  last_id: u64,
+  last_neuron_id: u64,
+  last_synapse_id: u64,
   now: u64,
 }
 
@@ -28,7 +30,8 @@ impl <'a> Network<'a> {
       pre_synapses: HashMap::new(),
       post_synapses: HashMap::new(),
       scheduler: wheel_timer::WheelTimer::new(max_delay),
-      last_id: 0,
+      last_neuron_id: 0,
+      last_synapse_id: 0,
       now: 0,
     }
   }
@@ -41,8 +44,8 @@ impl <'a> Network<'a> {
   }
 
   pub fn add_neuron(&mut self, neuron: Box<Neuron + 'a>) -> u64 {
-    let id = self.last_id + 1;
-    self.last_id = id;
+    let id = self.last_neuron_id + 1;
+    self.last_neuron_id = id;
 
     self.neurons.insert(id, neuron);
     return id
@@ -50,8 +53,8 @@ impl <'a> Network<'a> {
 
   pub fn add_synapse(&mut self, synapse: Box<Synapse + 'a>, a: u64, b: u64) -> u64 {
     // a (pre) -> (post) b
-    let id = self.last_id + 1;
-    self.last_id = id;
+    let id = self.last_synapse_id + 1;
+    self.last_synapse_id = id;
 
     self.synapses.insert(id, synapse);
 
@@ -70,7 +73,9 @@ impl <'a> Network<'a> {
     return id
   }
 
-  pub fn tick(&mut self, tau: f64) -> u64 {
+  pub fn tick(&mut self, tau: f64) -> (u64, Bitv) {
+    let mut bv = Bitv::from_elem(self.neurons.len(), false);
+
     // drain delayed neuronal firings
     for spike in self.scheduler.tick().iter() {
       if let Some(neuron) = self.neurons.get_mut(&spike.receiver) {
@@ -84,6 +89,8 @@ impl <'a> Network<'a> {
       if v <= 0.0 {
         continue;
       }
+
+      bv.set(*neuron_id as usize, true);
 
       if let Some(pre_synapses) = self.pre_synapses.get_mut(neuron_id) {
         for synapse_id in pre_synapses.iter() {
@@ -110,6 +117,7 @@ impl <'a> Network<'a> {
     }
 
     self.now = self.now + 1;
-    self.now
+
+    return (self.now, bv);
   }
 }

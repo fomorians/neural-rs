@@ -1,4 +1,5 @@
-#![allow(unstable)]
+#![feature(test)]
+#![feature(core)]
 
 extern crate test;
 extern crate neural;

@@ -1,13 +1,14 @@
-#![allow(unstable)]
+#![feature(test)]
+#![feature(core)]
 
 extern crate test;
 extern crate neural;
+extern crate rand;
 
 use std::default::Default;
 use std::num::Float;
-use std::rand;
-use std::rand::Rng;
-use std::rand::distributions::{Normal, IndependentSample};
+use rand::Rng;
+use rand::distributions::{Normal, IndependentSample};
 
 use neural::Network;
 use neural::izhikevich::{IzhikevichNeuron, IzhikevichConfig};
@@ -25,7 +26,7 @@ fn basic_network() {
 
   let synapse = STDPSynapse::new(Default::default());
   let s = network.add_synapse(Box::new(synapse), a, b);
-  assert!(s == 3);
+  assert!(s == 1);
 
   network.tick(1.0);
   network.tick(1.0);
@@ -109,7 +110,7 @@ fn spiking_network() {
 
   let norm = Normal::new(0.0, 1.0);
 
-  for _ in range(0us, 100) {
+  for _ in range(0us, 10) {
     for n in range(0u64, total_count) {
       // thalmic input
       let i = if n < excitatory_count {

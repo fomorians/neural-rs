@@ -1,4 +1,8 @@
-#![allow(unstable)]
+#![feature(test)]
+#![feature(core)]
+#![feature(path)]
+#![feature(io)]
+#![feature(os)]
 
 extern crate test;
 extern crate neural;
@@ -7,8 +11,8 @@ extern crate csv;
 use std::default::Default;
 use std::num::Float;
 
-use std::io::FilePermission;
-use std::io::fs;
+use std::old_io::FilePermission;
+use std::old_io::fs;
 
 use neural::Neuron;
 use neural::izhikevich::{IzhikevichNeuron, IzhikevichConfig};
