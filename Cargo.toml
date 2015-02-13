@@ -8,10 +8,7 @@ authors = [ "jim@barkingmousestudio.com" ]
 
 wheel_timer = "0.2.1"
 csv = "0.12.15"
-
-[dependencies.rand]
-
-git = "https://github.com/rust-lang/rand.git"
+rand = "0.1.2"
 
 [lib]
 
