@@ -2,7 +2,7 @@ extern crate wheel_timer;
 
 use std::collections::HashMap;
 use std::collections::hash_map::Entry::{Vacant, Occupied};
-use std::collections::Bitv;
+use std::collections::BitVec;
 
 use neuron::Neuron;
 use synapse::Synapse;
@@ -73,8 +73,8 @@ impl <'a> Network<'a> {
     return id
   }
 
-  pub fn tick(&mut self, tau: f64) -> (u64, Bitv) {
-    let mut spikes = Bitv::from_elem(self.neurons.len(), false);
+  pub fn tick(&mut self, tau: f64) -> (u64, BitVec) {
+    let mut spikes = BitVec::from_elem(self.neurons.len(), false);
 
     // drain delayed neuronal firings
     for spike in self.scheduler.tick().iter() {
