@@ -74,7 +74,7 @@ impl <'a> Network<'a> {
   }
 
   pub fn tick(&mut self, tau: f64) -> (u64, Bitv) {
-    let mut bv = Bitv::from_elem(self.neurons.len(), false);
+    let mut spikes = Bitv::from_elem(self.neurons.len(), false);
 
     // drain delayed neuronal firings
     for spike in self.scheduler.tick().iter() {
@@ -90,7 +90,7 @@ impl <'a> Network<'a> {
         continue;
       }
 
-      bv.set(*neuron_id as usize, true);
+      spikes.set(*neuron_id as usize, true);
 
       if let Some(pre_synapses) = self.pre_synapses.get_mut(neuron_id) {
         for synapse_id in pre_synapses.iter() {
@@ -118,6 +118,6 @@ impl <'a> Network<'a> {
 
     self.now = self.now + 1;
 
-    return (self.now, bv);
+    return (self.now, spikes);
   }
 }
