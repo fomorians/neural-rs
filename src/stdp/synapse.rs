@@ -77,12 +77,13 @@ impl Synapse for STDPSynapse {
     // postsynaptic spikes
     let delta = self.a_neg() * self.post_trace.read(now); // decay before using value
     self.weight = self.weight + delta;
+
     if self.weight > self.max {
       self.weight = self.max;
-    }
-    if self.weight < self.min {
+    } else if self.weight < self.min {
       self.weight = self.min;
     }
+
     return delta
   }
 
@@ -96,13 +97,15 @@ impl Synapse for STDPSynapse {
     // by an amount that depends on the value of the trace x left
     // by the presynaptic spike.
     let delta = self.a_pos() * self.pre_trace.read(now); // decay before using value
+
     self.weight = self.weight + delta;
+
     if self.weight > self.max {
       self.weight = self.max;
-    }
-    if self.weight < self.min {
+    } else if self.weight < self.min {
       self.weight = self.min;
     }
-    return delta
+
+    delta
   }
 }

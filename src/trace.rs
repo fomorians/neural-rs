@@ -6,13 +6,13 @@ use std::num::Float;
 pub struct Trace {
   value: f64,
   last_time: u64,
-  half_life: u64,
+  half_life: f64,
   continuous: bool
 }
 
 impl Trace {
 
-  pub fn new(half_life: u64, continuous: bool) -> Trace {
+  pub fn new(half_life: f64, continuous: bool) -> Trace {
     return Trace{
       continuous: continuous,
       half_life: half_life,
@@ -24,13 +24,12 @@ impl Trace {
   pub fn read(&mut self, now: u64) -> f64 {
     if self.last_time != 0 {
       // half-life decay
-      let half_life: f64 = self.half_life as f64;
       let diff: f64 = (now - self.last_time) as f64;
-      self.value *= (-1.0 * diff / half_life).exp();
+      self.value *= (-1.0 * diff / self.half_life).exp();
     }
 
     self.last_time = now;
-    return self.value
+    self.value
   }
 
   pub fn update(&mut self, val: f64, now: u64) {

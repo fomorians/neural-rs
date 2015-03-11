@@ -21,12 +21,12 @@ fn basic_network() {
   let neuron = IzhikevichNeuron::new(Default::default());
   let a = network.add_neuron(Box::new(neuron));
   let b = network.add_neuron(Box::new(neuron));
-  assert!(a == 1);
-  assert!(b == 2);
+  assert!(a == 0);
+  assert!(b == 1);
 
   let synapse = STDPSynapse::new(Default::default());
   let s = network.add_synapse(Box::new(synapse), a, b);
-  assert!(s == 1);
+  assert!(s == 0);
 
   network.tick(1.0);
   network.tick(1.0);
@@ -96,8 +96,8 @@ fn spiking_network() {
         max: 1.0,
         n_pos: 0.0,
         n_neg: 0.0,
-        tau_pos: 0,
-        tau_neg: 0,
+        tau_pos: 0.0,
+        tau_neg: 0.0,
         a_pos: 0.0,
         a_neg: 0.0,
         continuous: true,
@@ -110,7 +110,7 @@ fn spiking_network() {
 
   let norm = Normal::new(0.0, 1.0);
 
-  for _ in range(0us, 10) {
+  for _ in range(0, 10) {
     for n in range(0u64, total_count) {
       // thalmic input
       let i = if n < excitatory_count {

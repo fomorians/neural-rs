@@ -1,5 +1,4 @@
 #![feature(test)]
-#![feature(core)]
 
 extern crate test;
 extern crate neural;
@@ -8,7 +7,7 @@ use neural::trace::Trace;
 
 #[test]
 fn neural_trace_nearest_neighbor() {
-  let mut trace = Trace::new(1, false);
+  let mut trace = Trace::new(1.0, false);
   let mut val: f64;
 
   trace.update(1.0, 1);
@@ -29,7 +28,7 @@ fn neural_trace_nearest_neighbor() {
 
 #[test]
 fn neural_trace_all_to_all() {
-  let mut trace = Trace::new(1, true);
+  let mut trace = Trace::new(1.0, true);
   let mut val: f64;
 
   trace.update(1.0, 1);

@@ -9,8 +9,8 @@ pub struct STDPConfig {
   pub n_neg: f64,
 
   // trace config
-  pub tau_pos: u64,
-  pub tau_neg: u64,
+  pub tau_pos: f64,
+  pub tau_neg: f64,
   pub a_pos: f64,
   pub a_neg: f64,
 
@@ -26,17 +26,17 @@ pub struct STDPConfig {
 impl Default for STDPConfig {
   fn default() -> STDPConfig {
     STDPConfig{
-      weight: 0.0,
+      weight: 6.0,
       min: 0.0,
-      max: 0.0,
-      n_pos: 0.0,
-      n_neg: 0.0,
-      tau_pos: 0,
-      tau_neg: 0,
-      a_pos: 0.0,
-      a_neg: 0.0,
-      continuous: true,
-      scale: true,
+      max: 10.0,
+      n_pos: 0.1,
+      n_neg: -0.12,
+      tau_pos: 20.0,
+      tau_neg: 20.0,
+      a_pos: 1.0,
+      a_neg: 1.0,
+      continuous: false,
+      scale: false,
       delay: 0
     }
   }

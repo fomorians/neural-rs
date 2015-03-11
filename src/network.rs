@@ -17,8 +17,8 @@ pub struct Network<'a> {
 
   scheduler: wheel_timer::WheelTimer<Spike>,
 
-  last_neuron_id: u64,
-  last_synapse_id: u64,
+  next_neuron_id: u64,
+  next_synapse_id: u64,
   now: u64,
 }
 
@@ -30,8 +30,8 @@ impl <'a> Network<'a> {
       pre_synapses: HashMap::new(),
       post_synapses: HashMap::new(),
       scheduler: wheel_timer::WheelTimer::new(max_delay),
-      last_neuron_id: 0,
-      last_synapse_id: 0,
+      next_neuron_id: 0,
+      next_synapse_id: 0,
       now: 0,
     }
   }
@@ -44,8 +44,8 @@ impl <'a> Network<'a> {
   }
 
   pub fn add_neuron(&mut self, neuron: Box<Neuron + 'a>) -> u64 {
-    let id = self.last_neuron_id + 1;
-    self.last_neuron_id = id;
+    let id = self.next_neuron_id;
+    self.next_neuron_id = id + 1;
 
     self.neurons.insert(id, neuron);
     return id
@@ -53,8 +53,8 @@ impl <'a> Network<'a> {
 
   pub fn add_synapse(&mut self, synapse: Box<Synapse + 'a>, a: u64, b: u64) -> u64 {
     // a (pre) -> (post) b
-    let id = self.last_synapse_id + 1;
-    self.last_synapse_id = id;
+    let id = self.next_synapse_id;
+    self.next_synapse_id = id + 1;
 
     self.synapses.insert(id, synapse);
 

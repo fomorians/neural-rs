@@ -1,8 +1,7 @@
 #![feature(test)]
-#![feature(core)]
-#![feature(path)]
-#![feature(io)]
-#![feature(os)]
+#![feature(env)]
+#![feature(old_io)]
+#![feature(old_path)]
 
 extern crate test;
 extern crate neural;
@@ -31,7 +30,7 @@ fn run(t: Test) {
   let mut now = 0f64;
   let mut spikes = 0;
 
-  let path = Path::new(std::os::getcwd().unwrap())
+  let path = Path::new(std::env::current_dir().unwrap())
     .join("tests/results/");
   fs::mkdir_recursive(&path, FilePermission::from_bits(0o777).unwrap()).ok();
 
