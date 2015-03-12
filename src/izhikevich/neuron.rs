@@ -12,6 +12,9 @@ pub struct IzhikevichNeuron {
   // Membrane recovery
   pub u: f64,
 
+  // Membrane recovery (starting)
+  pub u_start: f64,
+
   // Describes accumulated membrane potential before updating.
   i: f64,
 
@@ -57,6 +60,7 @@ impl IzhikevichNeuron {
     IzhikevichNeuron{
       v: config.v,
       u: config.u,
+      u_start: config.u,
       a: config.a,
       b: config.b,
       c: config.c,
@@ -76,7 +80,9 @@ impl Neuron for IzhikevichNeuron {
   }
 
   fn tick(&mut self, tau: f64) -> f64 {
-    assert!(self.u.is_finite());
+    if !self.u.is_finite() {
+      self.u = self.u_start;
+    }
 
     // The potential updates according to the input and the
     // passage of time including the variable recovery factor
