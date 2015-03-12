@@ -1,4 +1,5 @@
 use std::default::Default;
+use std::num::Float;
 
 use neuron::Neuron;
 use izhikevich::config::IzhikevichConfig;
