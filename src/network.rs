@@ -8,6 +8,10 @@ use neuron::Neuron;
 use synapse::Synapse;
 use spike::Spike;
 
+pub enum NeuralError {
+  MissingNeuron = 0,
+}
+
 pub struct Network<'a> {
   neurons: HashMap<u64, Box<Neuron + 'a>>,
   synapses: HashMap<u64, Box<Synapse + 'a>>,
@@ -19,7 +23,7 @@ pub struct Network<'a> {
 
   next_neuron_id: u64,
   next_synapse_id: u64,
-  now: u64,
+  now: f64,
 }
 
 impl <'a> Network<'a> {
@@ -32,7 +36,7 @@ impl <'a> Network<'a> {
       scheduler: wheel_timer::WheelTimer::new(max_delay),
       next_neuron_id: 0,
       next_synapse_id: 0,
-      now: 0,
+      now: 0.0,
     }
   }
 
@@ -48,10 +52,14 @@ impl <'a> Network<'a> {
     self.next_neuron_id = id + 1;
 
     self.neurons.insert(id, neuron);
-    return id
+    id
   }
 
-  pub fn add_synapse(&mut self, synapse: Box<Synapse + 'a>, a: u64, b: u64) -> u64 {
+  pub fn add_synapse(&mut self, synapse: Box<Synapse + 'a>, a: u64, b: u64) -> Result<u64, NeuralError> {
+    if !self.neurons.contains_key(&a) || !self.neurons.contains_key(&b) {
+      return Err(NeuralError::MissingNeuron)
+    }
+
     // a (pre) -> (post) b
     let id = self.next_synapse_id;
     self.next_synapse_id = id + 1;
@@ -70,10 +78,10 @@ impl <'a> Network<'a> {
     };
     post_synapses.push(id);
 
-    return id
+    Ok(id)
   }
 
-  pub fn tick(&mut self, tau: f64) -> (u64, BitVec) {
+  pub fn tick(&mut self, tau: f64) -> (f64, BitVec) {
     let mut spikes = BitVec::from_elem(self.neurons.len(), false);
 
     // drain delayed neuronal firings
@@ -103,7 +111,6 @@ impl <'a> Network<'a> {
       if let Some(post_synapses) = self.post_synapses.get_mut(neuron_id) {
         for synapse_id in post_synapses.iter() {
           if let Some(synapse) = self.synapses.get_mut(synapse_id) {
-            // XXX: Is this correct? Should this be updated post-scheduled?
             synapse.pre_recv(self.now);
 
             let spike = Spike{
@@ -116,8 +123,8 @@ impl <'a> Network<'a> {
       }
     }
 
-    self.now = self.now + 1;
+    self.now = self.now + tau;
 
-    return (self.now, spikes);
+    (self.now, spikes)
   }
 }

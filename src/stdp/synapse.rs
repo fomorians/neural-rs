@@ -66,7 +66,7 @@ impl Synapse for STDPSynapse {
     self.delay
   }
 
-  fn pre_recv(&mut self, now: u64) -> f64 { // delta
+  fn pre_recv(&mut self, now: f64) -> f64 { // delta
     // Pre-synaptic spike leaves a trace which increases
     // by an amount a+(x) at the moment of spike arrival and decays
     // exponentially in the absence of spikes
@@ -87,7 +87,7 @@ impl Synapse for STDPSynapse {
     return delta
   }
 
-  fn post_recv(&mut self, now: u64) -> f64 { // delta
+  fn post_recv(&mut self, now: f64) -> f64 { // delta
     // Post-synaptic spike leaves a trace y(t) which increases
     // by an amount a-(y) at the moment of spike arrival and decays
     // exponentially in the absence of spikes.
