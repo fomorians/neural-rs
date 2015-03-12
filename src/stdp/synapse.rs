@@ -72,10 +72,11 @@ impl Synapse for STDPSynapse {
     // exponentially in the absence of spikes
     self.pre_trace.update(self.a_pos, now); // used by post
 
-    // Weight is depressed at the moment of presynaptic spikes
+    // Weight is depressed at the moment of pre-synaptic spikes
     // by an amount proportional to the trace y left by previous
-    // postsynaptic spikes
+    // post-synaptic spikes
     let delta = self.a_neg() * self.post_trace.read(now); // decay before using value
+
     self.weight = self.weight + delta;
 
     if self.weight > self.max {
@@ -84,7 +85,7 @@ impl Synapse for STDPSynapse {
       self.weight = self.min;
     }
 
-    return delta
+    delta
   }
 
   fn post_recv(&mut self, now: f64) -> f64 { // delta
@@ -95,7 +96,7 @@ impl Synapse for STDPSynapse {
 
     // Weight is increased at the moment of post-synaptic firing
     // by an amount that depends on the value of the trace x left
-    // by the presynaptic spike.
+    // by the pre-synaptic spike.
     let delta = self.a_pos() * self.pre_trace.read(now); // decay before using value
 
     self.weight = self.weight + delta;

@@ -16,8 +16,8 @@ pub struct Network<'a> {
   neurons: HashMap<u64, Box<Neuron + 'a>>,
   synapses: HashMap<u64, Box<Synapse + 'a>>,
 
-  pre_synapses: HashMap<u64, Vec<u64>>,
-  post_synapses: HashMap<u64, Vec<u64>>,
+  send_synapses: HashMap<u64, Vec<u64>>,
+  recv_synapses: HashMap<u64, Vec<u64>>,
 
   scheduler: wheel_timer::WheelTimer<Spike>,
 
@@ -31,8 +31,8 @@ impl <'a> Network<'a> {
     return Network{
       neurons: HashMap::new(),
       synapses: HashMap::new(),
-      pre_synapses: HashMap::new(),
-      post_synapses: HashMap::new(),
+      send_synapses: HashMap::new(),
+      recv_synapses: HashMap::new(),
       scheduler: wheel_timer::WheelTimer::new(max_delay),
       next_neuron_id: 0,
       next_synapse_id: 0,
@@ -66,17 +66,17 @@ impl <'a> Network<'a> {
 
     self.synapses.insert(id, synapse);
 
-    let pre_synapses = match self.pre_synapses.entry(from_id) {
+    let send_synapses = match self.send_synapses.entry(from_id) {
       Vacant(entry) => entry.insert(Vec::new()),
       Occupied(entry) => entry.into_mut(),
     };
-    pre_synapses.push(id);
+    send_synapses.push(id);
 
-    let post_synapses = match self.post_synapses.entry(to_id) {
+    let recv_synapses = match self.recv_synapses.entry(to_id) {
       Vacant(entry) => entry.insert(Vec::new()),
       Occupied(entry) => entry.into_mut(),
     };
-    post_synapses.push(id);
+    recv_synapses.push(id);
 
     Ok(id)
   }
@@ -100,16 +100,16 @@ impl <'a> Network<'a> {
 
       spikes.set(*neuron_id as usize, true);
 
-      if let Some(pre_synapses) = self.pre_synapses.get_mut(neuron_id) {
-        for synapse_id in pre_synapses.iter() {
+      if let Some(send_synapses) = self.send_synapses.get_mut(neuron_id) {
+        for synapse_id in send_synapses.iter() {
           if let Some(synapse) = self.synapses.get_mut(synapse_id) {
             synapse.post_recv(self.now);
           }
         }
       }
 
-      if let Some(post_synapses) = self.post_synapses.get_mut(neuron_id) {
-        for synapse_id in post_synapses.iter() {
+      if let Some(recv_synapses) = self.recv_synapses.get_mut(neuron_id) {
+        for synapse_id in recv_synapses.iter() {
           if let Some(synapse) = self.synapses.get_mut(synapse_id) {
             synapse.pre_recv(self.now);
 
