@@ -47,3 +47,8 @@ Izhikevich neuron model
 ![png](Neural_files/Neural_20_0.png)
 
 ![png](Neural_files/Neural_21_0.png)
+
+STDP synapse model
+---
+
+![png](Neural_files/Neural_22_0.png)
