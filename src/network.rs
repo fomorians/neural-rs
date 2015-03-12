@@ -56,24 +56,24 @@ impl <'a> Network<'a> {
     neuron_id
   }
 
-  pub fn add_synapse(&mut self, synapse: Box<Synapse + 'a>, send_id: u64, recv_id: u64) -> Result<u64, NeuralError> {
-    if !self.neurons.contains_key(&send_id) || !self.neurons.contains_key(&recv_id) {
+  pub fn add_synapse(&mut self, synapse: Box<Synapse + 'a>, sendr_id: u64, recvr_id: u64) -> Result<u64, NeuralError> {
+    if !self.neurons.contains_key(&sendr_id) || !self.neurons.contains_key(&recvr_id) {
       return Err(NeuralError::MissingNeuron)
     }
 
-    // send_id (pre) -> (post) recv_id
+    // sendr_id (pre) -> (post) recvr_id
     let synapse_id = self.next_synapse_id;
     self.next_synapse_id = synapse_id + 1;
 
     self.synapses.insert(synapse_id, synapse);
 
-    let send_synapses = match self.send_synapses.entry(send_id) {
+    let send_synapses = match self.send_synapses.entry(sendr_id) {
       Vacant(entry) => entry.insert(Vec::new()),
       Occupied(entry) => entry.into_mut(),
     };
-    send_synapses.push((recv_id, synapse_id));
+    send_synapses.push((recvr_id, synapse_id));
 
-    let recv_synapses = match self.recv_synapses.entry(recv_id) {
+    let recv_synapses = match self.recv_synapses.entry(recvr_id) {
       Vacant(entry) => entry.insert(Vec::new()),
       Occupied(entry) => entry.into_mut(),
     };
@@ -87,21 +87,21 @@ impl <'a> Network<'a> {
 
     // drain delayed neuronal firings
     for spike in self.scheduler.tick().iter() {
-      if let Some(neuron) = self.neurons.get_mut(&spike.recv_id) {
+      if let Some(neuron) = self.neurons.get_mut(&spike.recvr_id) {
         neuron.recv(spike.v);
       }
     }
 
     // update neurons
-    for (send_id, neuron) in self.neurons.iter_mut() {
+    for (sendr_id, neuron) in self.neurons.iter_mut() {
       let v = neuron.tick(tau);
       if v <= 0.0 {
         continue;
       }
 
-      spikes.set(*send_id as usize, true);
+      spikes.set(*sendr_id as usize, true);
 
-      if let Some(recv_synapses) = self.recv_synapses.get_mut(send_id) {
+      if let Some(recv_synapses) = self.recv_synapses.get_mut(sendr_id) {
         for synapse_id in recv_synapses.iter() {
           if let Some(synapse) = self.synapses.get_mut(&synapse_id) {
             synapse.pre_recv(self.now);
@@ -109,13 +109,13 @@ impl <'a> Network<'a> {
         }
       }
 
-      if let Some(send_synapses) = self.send_synapses.get_mut(send_id) {
-        for &(recv_id, synapse_id) in send_synapses.iter() {
+      if let Some(send_synapses) = self.send_synapses.get_mut(sendr_id) {
+        for &(recvr_id, synapse_id) in send_synapses.iter() {
           if let Some(synapse) = self.synapses.get_mut(&synapse_id) {
             synapse.post_recv(self.now);
 
             let spike = Spike{
-              recv_id: recv_id,
+              recvr_id: recvr_id,
               v:        v * synapse.weight(),
             };
             self.scheduler.schedule(synapse.delay(), spike);
