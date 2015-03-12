@@ -100,18 +100,18 @@ impl <'a> Network<'a> {
 
       spikes.set(*neuron_id as usize, true);
 
-      if let Some(send_synapses) = self.send_synapses.get_mut(neuron_id) {
-        for synapse_id in send_synapses.iter() {
-          if let Some(synapse) = self.synapses.get_mut(synapse_id) {
-            synapse.post_recv(self.now);
-          }
-        }
-      }
-
       if let Some(recv_synapses) = self.recv_synapses.get_mut(neuron_id) {
         for synapse_id in recv_synapses.iter() {
           if let Some(synapse) = self.synapses.get_mut(synapse_id) {
             synapse.pre_recv(self.now);
+          }
+        }
+      }
+
+      if let Some(send_synapses) = self.send_synapses.get_mut(neuron_id) {
+        for synapse_id in send_synapses.iter() {
+          if let Some(synapse) = self.synapses.get_mut(synapse_id) {
+            synapse.post_recv(self.now);
 
             let spike = Spike{
               receiver: *neuron_id,
