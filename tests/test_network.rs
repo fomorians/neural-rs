@@ -25,12 +25,52 @@ fn basic_network() {
   assert!(b == 1);
 
   let synapse = STDPSynapse::new(Default::default());
-  let s = network.add_synapse(Box::new(synapse), a, b);
+  let s = network.add_synapse(Box::new(synapse), a, b).unwrap();
   assert!(s == 0);
 
   network.tick(1.0);
   network.tick(1.0);
   network.tick(1.0);
+}
+
+
+#[test]
+fn test_synapse_direction() {
+  let mut network = Network::new(20);
+
+  let neuron = IzhikevichNeuron::new(Default::default());
+  let a = network.add_neuron(Box::new(neuron));
+  let b = network.add_neuron(Box::new(neuron));
+  assert!(a == 0);
+  assert!(b == 1);
+
+  let synapse = STDPSynapse::new(Default::default());
+  let s = network.add_synapse(Box::new(synapse), a, b).unwrap();
+  assert!(s == 0);
+
+  let v = network.recv(a, 1000.0);
+  assert!(v == 1000.0);
+
+  {
+    let (now, spikes) = network.tick(1.0);
+    assert!(now == 1.0);
+    assert!(spikes.get(0) == Some(true));
+    assert!(spikes.get(1) == Some(false));
+  }
+
+  {
+    let (now, spikes) = network.tick(1.0);
+    assert!(now == 2.0);
+    assert!(spikes.get(0) == Some(false));
+    assert!(spikes.get(1) == Some(true));
+  }
+
+  {
+    let (now, spikes) = network.tick(1.0);
+    assert!(now == 3.0);
+    assert!(spikes.get(0) == Some(false));
+    assert!(spikes.get(1) == Some(false));
+  }
 }
 
 #[test]
@@ -104,7 +144,7 @@ fn spiking_network() {
         scale: true,
         delay: 1
       });
-      network.add_synapse(Box::new(synapse), n, m);
+      network.add_synapse(Box::new(synapse), n, m).unwrap();
     }
   }
 

@@ -8,6 +8,7 @@ use neuron::Neuron;
 use synapse::Synapse;
 use spike::Spike;
 
+#[derive(Debug)]
 pub enum NeuralError {
   MissingNeuron = 0,
 }
@@ -16,7 +17,7 @@ pub struct Network<'a> {
   neurons: HashMap<u64, Box<Neuron + 'a>>,
   synapses: HashMap<u64, Box<Synapse + 'a>>,
 
-  send_synapses: HashMap<u64, Vec<u64>>,
+  send_synapses: HashMap<u64, Vec<(u64, u64)>>,
   recv_synapses: HashMap<u64, Vec<u64>>,
 
   scheduler: wheel_timer::WheelTimer<Spike>,
@@ -48,37 +49,37 @@ impl <'a> Network<'a> {
   }
 
   pub fn add_neuron(&mut self, neuron: Box<Neuron + 'a>) -> u64 {
-    let id = self.next_neuron_id;
-    self.next_neuron_id = id + 1;
+    let neuron_id = self.next_neuron_id;
+    self.next_neuron_id = neuron_id + 1;
 
-    self.neurons.insert(id, neuron);
-    id
+    self.neurons.insert(neuron_id, neuron);
+    neuron_id
   }
 
-  pub fn add_synapse(&mut self, synapse: Box<Synapse + 'a>, from_id: u64, to_id: u64) -> Result<u64, NeuralError> {
-    if !self.neurons.contains_key(&from_id) || !self.neurons.contains_key(&to_id) {
+  pub fn add_synapse(&mut self, synapse: Box<Synapse + 'a>, send_id: u64, recv_id: u64) -> Result<u64, NeuralError> {
+    if !self.neurons.contains_key(&send_id) || !self.neurons.contains_key(&recv_id) {
       return Err(NeuralError::MissingNeuron)
     }
 
-    // from_id (pre) -> (post) to_id
-    let id = self.next_synapse_id;
-    self.next_synapse_id = id + 1;
+    // send_id (pre) -> (post) recv_id
+    let synapse_id = self.next_synapse_id;
+    self.next_synapse_id = synapse_id + 1;
 
-    self.synapses.insert(id, synapse);
+    self.synapses.insert(synapse_id, synapse);
 
-    let send_synapses = match self.send_synapses.entry(from_id) {
+    let send_synapses = match self.send_synapses.entry(send_id) {
       Vacant(entry) => entry.insert(Vec::new()),
       Occupied(entry) => entry.into_mut(),
     };
-    send_synapses.push(id);
+    send_synapses.push((recv_id, synapse_id));
 
-    let recv_synapses = match self.recv_synapses.entry(to_id) {
+    let recv_synapses = match self.recv_synapses.entry(recv_id) {
       Vacant(entry) => entry.insert(Vec::new()),
       Occupied(entry) => entry.into_mut(),
     };
-    recv_synapses.push(id);
+    recv_synapses.push(synapse_id);
 
-    Ok(id)
+    Ok(synapse_id)
   }
 
   pub fn tick(&mut self, tau: f64) -> (f64, BitVec) {
@@ -102,21 +103,23 @@ impl <'a> Network<'a> {
 
       if let Some(recv_synapses) = self.recv_synapses.get_mut(neuron_id) {
         for synapse_id in recv_synapses.iter() {
-          if let Some(synapse) = self.synapses.get_mut(synapse_id) {
+          if let Some(synapse) = self.synapses.get_mut(&synapse_id) {
             synapse.pre_recv(self.now);
           }
         }
       }
 
       if let Some(send_synapses) = self.send_synapses.get_mut(neuron_id) {
-        for synapse_id in send_synapses.iter() {
-          if let Some(synapse) = self.synapses.get_mut(synapse_id) {
+        for &(receiver_id, synapse_id) in send_synapses.iter() {
+          if let Some(synapse) = self.synapses.get_mut(&synapse_id) {
             synapse.post_recv(self.now);
 
+            // XXX: This part is wrong... It's receiving its own spikes.
             let spike = Spike{
-              receiver: *neuron_id,
-              v:        synapse.weight(),
+              receiver: receiver_id,
+              v:        v * synapse.weight(),
             };
+            println!("from: {} to: {} v: {}", neuron_id, receiver_id, spike.v);
             self.scheduler.schedule(synapse.delay(), spike);
           }
         }
