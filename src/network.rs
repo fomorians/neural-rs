@@ -55,24 +55,24 @@ impl <'a> Network<'a> {
     id
   }
 
-  pub fn add_synapse(&mut self, synapse: Box<Synapse + 'a>, a: u64, b: u64) -> Result<u64, NeuralError> {
-    if !self.neurons.contains_key(&a) || !self.neurons.contains_key(&b) {
+  pub fn add_synapse(&mut self, synapse: Box<Synapse + 'a>, from_id: u64, to_id: u64) -> Result<u64, NeuralError> {
+    if !self.neurons.contains_key(&from_id) || !self.neurons.contains_key(&to_id) {
       return Err(NeuralError::MissingNeuron)
     }
 
-    // a (pre) -> (post) b
+    // from_id (pre) -> (post) to_id
     let id = self.next_synapse_id;
     self.next_synapse_id = id + 1;
 
     self.synapses.insert(id, synapse);
 
-    let pre_synapses = match self.pre_synapses.entry(a) {
+    let pre_synapses = match self.pre_synapses.entry(from_id) {
       Vacant(entry) => entry.insert(Vec::new()),
       Occupied(entry) => entry.into_mut(),
     };
     pre_synapses.push(id);
 
-    let post_synapses = match self.post_synapses.entry(b) {
+    let post_synapses = match self.post_synapses.entry(to_id) {
       Vacant(entry) => entry.insert(Vec::new()),
       Occupied(entry) => entry.into_mut(),
     };
