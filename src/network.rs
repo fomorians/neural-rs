@@ -87,21 +87,21 @@ impl <'a> Network<'a> {
 
     // drain delayed neuronal firings
     for spike in self.scheduler.tick().iter() {
-      if let Some(neuron) = self.neurons.get_mut(&spike.receiver) {
+      if let Some(neuron) = self.neurons.get_mut(&spike.recv_id) {
         neuron.recv(spike.v);
       }
     }
 
     // update neurons
-    for (neuron_id, neuron) in self.neurons.iter_mut() {
+    for (send_id, neuron) in self.neurons.iter_mut() {
       let v = neuron.tick(tau);
       if v <= 0.0 {
         continue;
       }
 
-      spikes.set(*neuron_id as usize, true);
+      spikes.set(*send_id as usize, true);
 
-      if let Some(recv_synapses) = self.recv_synapses.get_mut(neuron_id) {
+      if let Some(recv_synapses) = self.recv_synapses.get_mut(send_id) {
         for synapse_id in recv_synapses.iter() {
           if let Some(synapse) = self.synapses.get_mut(&synapse_id) {
             synapse.pre_recv(self.now);
@@ -109,17 +109,15 @@ impl <'a> Network<'a> {
         }
       }
 
-      if let Some(send_synapses) = self.send_synapses.get_mut(neuron_id) {
-        for &(receiver_id, synapse_id) in send_synapses.iter() {
+      if let Some(send_synapses) = self.send_synapses.get_mut(send_id) {
+        for &(recv_id, synapse_id) in send_synapses.iter() {
           if let Some(synapse) = self.synapses.get_mut(&synapse_id) {
             synapse.post_recv(self.now);
 
-            // XXX: This part is wrong... It's receiving its own spikes.
             let spike = Spike{
-              receiver: receiver_id,
+              recv_id: recv_id,
               v:        v * synapse.weight(),
             };
-            println!("from: {} to: {} v: {}", neuron_id, receiver_id, spike.v);
             self.scheduler.schedule(synapse.delay(), spike);
           }
         }
