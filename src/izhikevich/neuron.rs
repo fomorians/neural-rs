@@ -75,6 +75,8 @@ impl Neuron for IzhikevichNeuron {
   }
 
   fn tick(&mut self, tau: f64) -> f64 {
+    assert!(self.u.is_finite());
+
     // The potential updates according to the input and the
     // passage of time including the variable recovery factor
     // The recovery factor is updated according to the current
