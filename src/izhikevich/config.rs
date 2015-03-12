@@ -1,6 +1,6 @@
 use std::default::Default;
 
-#[derive(Debug, Copy)]
+#[derive(Debug, Copy, RustcEncodable, RustcDecodable)]
 pub struct IzhikevichConfig {
   pub v: f64,
   pub u: f64,
