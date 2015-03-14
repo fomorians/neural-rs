@@ -14,9 +14,3 @@ rand = "0.1.4"
 [lib]
 
 name = "neural"
-
-[profile.test]
-opt-level = 0  # Controls the --opt-level the compiler builds with
-
-[profile.bench]
-opt-level = 3  # Controls the --opt-level the compiler builds with
