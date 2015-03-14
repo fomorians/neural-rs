@@ -37,7 +37,7 @@ impl Default for STDPConfig {
       a_neg: 1.0,
       continuous: false,
       scale: false,
-      delay: 0
+      delay: 1
     }
   }
 }
