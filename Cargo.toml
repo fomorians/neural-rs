@@ -6,10 +6,10 @@ authors = [ "jim@barkingmousestudio.com" ]
 
 [dependencies]
 
-rustc-serialize = "0.2.12"
+rustc-serialize = "0.2.15"
 wheel_timer = "0.2.2"
-csv = "0.12.15"
-rand = "0.1.2"
+csv = "0.12.19"
+rand = "0.1.4"
 
 [lib]
 
