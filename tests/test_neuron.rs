@@ -36,17 +36,18 @@ fn run(t: Test) {
   let filepath = path.join(&format!("{}.csv", t.name));
 
   let mut writer = csv::Writer::from_file(&PathOld::new(filepath.as_path().to_str().unwrap()));
-  writer.encode(("t", "I", "V")).ok();
+  writer.encode(("t", "I", "V", "spike")).ok();
 
   while now < t.timespan {
     let ip = (t.input)(now);
     neuron.recv(ip);
 
-    if neuron.tick(t.tau) > 0.0 {
+    let spike = neuron.tick(t.tau);
+    if spike != 0.0 {
       spikes = spikes + 1;
     }
 
-    writer.encode((now, ip, neuron.v)).ok();
+    writer.encode((now, ip, neuron.v, spike)).ok();
 
     now = now + t.tau;
   }

@@ -101,8 +101,8 @@ impl Neuron for IzhikevichNeuron {
 
     self.i = 0.0;
 
-    if self.v > self.v_peak {
-      let v = self.v;
+    if self.v >= self.v_peak {
+      let v = self.v_peak;
       self.v = self.c;
       self.u += self.d;
       v

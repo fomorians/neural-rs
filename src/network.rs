@@ -95,7 +95,7 @@ impl <'a> Network<'a> {
     // update neurons
     for (sendr_id, neuron) in self.neurons.iter_mut() {
       let v = neuron.tick(tau);
-      if v <= 0.0 {
+      if v == 0.0 {
         continue;
       }
 
