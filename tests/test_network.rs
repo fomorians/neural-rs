@@ -62,12 +62,19 @@ fn test_synapse_direction() {
     let (now, spikes) = network.tick(1.0);
     assert!(now == 2.0);
     assert!(spikes.get(0) == Some(false));
-    assert!(spikes.get(1) == Some(true));
+    assert!(spikes.get(1) == Some(false));
   }
 
   {
     let (now, spikes) = network.tick(1.0);
     assert!(now == 3.0);
+    assert!(spikes.get(0) == Some(false));
+    assert!(spikes.get(1) == Some(true));
+  }
+
+  {
+    let (now, spikes) = network.tick(1.0);
+    assert!(now == 4.0);
     assert!(spikes.get(0) == Some(false));
     assert!(spikes.get(1) == Some(false));
   }

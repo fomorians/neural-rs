@@ -1,28 +1,27 @@
 #![feature(test)]
-#![feature(env)]
 #![feature(old_path)]
-#![feature(old_io)]
+#![feature(std_misc)]
 
 extern crate test;
 extern crate neural;
 extern crate csv;
 
 use std::default::Default;
-
-use std::old_io::FilePermission;
-use std::old_io::fs;
+use std::path::{Path, AsPath};
+use std::fs;
+use std::old_path::Path as PathOld;
 
 use neural::Synapse;
 use neural::stdp::STDPSynapse;
 
 #[test]
 fn test_synapse_ltp() {
-  let path = Path::new(std::env::current_dir().unwrap())
+  let path = Path::new(&std::env::current_dir().unwrap())
     .join("tests/results/");
-  fs::mkdir_recursive(&path, FilePermission::from_bits(0o777).unwrap()).ok();
+  fs::create_dir_all(&path).ok();
 
   let filepath = path.join("stdp_ltp.csv");
-  let mut writer = csv::Writer::from_file(&filepath);
+  let mut writer = csv::Writer::from_file(&PathOld::new(filepath.as_path().to_str().unwrap()));
 
   writer.encode(("t", "d")).ok();
 
@@ -48,12 +47,12 @@ fn test_synapse_ltp() {
 
 #[test]
 fn test_synapse_ltd() {
-  let path = Path::new(std::env::current_dir().unwrap())
+  let path = Path::new(&std::env::current_dir().unwrap())
     .join("tests/results/");
-  fs::mkdir_recursive(&path, FilePermission::from_bits(0o777).unwrap()).ok();
+  fs::create_dir_all(&path).ok();
 
   let filepath = path.join("stdp_ltd.csv");
-  let mut writer = csv::Writer::from_file(&filepath);
+  let mut writer = csv::Writer::from_file(&PathOld::new(filepath.as_path().to_str().unwrap()));
 
   writer.encode(("t", "d")).ok();
 

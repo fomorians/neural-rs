@@ -1,7 +1,6 @@
 #![feature(test)]
-#![feature(env)]
-#![feature(old_io)]
 #![feature(old_path)]
+#![feature(std_misc)]
 
 extern crate test;
 extern crate neural;
@@ -9,9 +8,9 @@ extern crate csv;
 
 use std::default::Default;
 use std::num::Float;
-
-use std::old_io::FilePermission;
-use std::old_io::fs;
+use std::path::{Path, AsPath};
+use std::old_path::Path as PathOld;
+use std::fs;
 
 use neural::Neuron;
 use neural::izhikevich::{IzhikevichNeuron, IzhikevichConfig};
@@ -30,13 +29,13 @@ fn run(t: Test) {
   let mut now = 0f64;
   let mut spikes = 0;
 
-  let path = Path::new(std::env::current_dir().unwrap())
+  let path = Path::new(&std::env::current_dir().unwrap())
     .join("tests/results/");
-  fs::mkdir_recursive(&path, FilePermission::from_bits(0o777).unwrap()).ok();
+  fs::create_dir_all(&path).ok();
 
-  let filepath = path.join(format!("{}.csv", t.name));
+  let filepath = path.join(&format!("{}.csv", t.name));
 
-  let mut writer = csv::Writer::from_file(&filepath);
+  let mut writer = csv::Writer::from_file(&PathOld::new(filepath.as_path().to_str().unwrap()));
   writer.encode(("t", "I", "V")).ok();
 
   while now < t.timespan {

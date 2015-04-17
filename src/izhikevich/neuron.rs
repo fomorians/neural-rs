@@ -47,6 +47,8 @@ pub struct IzhikevichNeuron {
 
   // Special casing for accomodation model...
   is_accomodation: bool,
+
+  v_peak: f64,
 }
 
 impl Default for IzhikevichNeuron {
@@ -69,6 +71,7 @@ impl IzhikevichNeuron {
       f: config.f,
       is_accomodation: config.is_accomodation,
       i: 0.0,
+      v_peak: 30.0,
     }
   }
 }
@@ -98,7 +101,7 @@ impl Neuron for IzhikevichNeuron {
 
     self.i = 0.0;
 
-    if self.v > 30.0 {
+    if self.v > self.v_peak {
       let v = self.v;
       self.v = self.c;
       self.u += self.d;
