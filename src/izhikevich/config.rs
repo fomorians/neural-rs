@@ -57,7 +57,7 @@ impl IzhikevichConfig {
     IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0, is_accomodation: false}
   }
 
-  pub fn phastic_spiking() -> IzhikevichConfig {
+  pub fn phasic_spiking() -> IzhikevichConfig {
     let a = 0.02;
     let b = 0.25;
     let c = -65.0;
@@ -77,7 +77,7 @@ impl IzhikevichConfig {
     IzhikevichConfig{v: v, u: u, a: a, b: b, c: c, d: d, e: 5.0, f: 140.0, is_accomodation: false}
   }
 
-  pub fn phastic_bursting() -> IzhikevichConfig {
+  pub fn phasic_bursting() -> IzhikevichConfig {
     let a = 0.02;
     let b = 0.25;
     let c = -55.0;
