@@ -24,8 +24,11 @@ impl Trace {
     if self.last_time != 0.0 {
       // half-life decay
       let diff = now - self.last_time;
-      let x = -1.0 * diff / self.half_life;
-      self.value *= x * x;
+      if diff >= 0.0 {
+        self.value = (-diff / (self.half_life * 2.0)) + 1.0;
+      } else {
+        self.value = (diff / (self.half_life * 2.0)) - 1.0;
+      }
     }
 
     self.last_time = now;
