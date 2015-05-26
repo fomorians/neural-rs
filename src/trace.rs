@@ -1,8 +1,7 @@
 // Trace is a data-structure for a decaying value. It can be sampled
 // at any point in the future to get its discrete decayed valued.
-use std::num::Float;
 
-#[derive(Debug, Copy)]
+#[derive(Debug, Clone, Copy)]
 pub struct Trace {
   value: f64,
   last_time: f64,

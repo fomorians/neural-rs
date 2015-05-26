@@ -1,6 +1,5 @@
 #![allow(unused_attributes)]
 
-#![feature(std_misc)]
 #![feature(collections)]
 
 pub use self::network::Network;

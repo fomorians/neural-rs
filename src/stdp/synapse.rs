@@ -2,7 +2,7 @@ use synapse::Synapse;
 use trace::Trace;
 use stdp::config::STDPConfig;
 
-#[derive(Debug, Copy)]
+#[derive(Debug, Clone, Copy)]
 pub struct STDPSynapse {
   weight: f64,
 

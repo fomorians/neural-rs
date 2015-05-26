@@ -1,15 +1,12 @@
 #![feature(test)]
-#![feature(old_path)]
-#![feature(std_misc)]
 
 extern crate test;
 extern crate neural;
 extern crate csv;
 
 use std::default::Default;
-use std::path::{Path, AsPath};
+use std::path::Path;
 use std::fs;
-use std::old_path::Path as PathOld;
 
 use neural::Synapse;
 use neural::stdp::STDPSynapse;
@@ -21,7 +18,7 @@ fn test_synapse_ltp() {
   fs::create_dir_all(&path).ok();
 
   let filepath = path.join("stdp_ltp.csv");
-  let mut writer = csv::Writer::from_file(&PathOld::new(filepath.as_path().to_str().unwrap()));
+  let mut writer = csv::Writer::from_file(filepath.as_path()).unwrap();
 
   writer.encode(("t", "d")).ok();
 
@@ -52,7 +49,7 @@ fn test_synapse_ltd() {
   fs::create_dir_all(&path).ok();
 
   let filepath = path.join("stdp_ltd.csv");
-  let mut writer = csv::Writer::from_file(&PathOld::new(filepath.as_path().to_str().unwrap()));
+  let mut writer = csv::Writer::from_file(&filepath.as_path()).unwrap();
 
   writer.encode(("t", "d")).ok();
 

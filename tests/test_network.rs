@@ -1,12 +1,10 @@
 #![feature(test)]
-#![feature(core)]
 
 extern crate test;
 extern crate neural;
 extern crate rand;
 
 use std::default::Default;
-use std::num::Float;
 use rand::Rng;
 use rand::distributions::{Normal, IndependentSample};
 
@@ -89,7 +87,7 @@ fn spiking_network() {
   let inhibitory_count = 200u64;
   let total_count = excitatory_count + inhibitory_count;
 
-  for _ in range(0u64, excitatory_count) {
+  for _ in 0u64..excitatory_count {
     let r = rng.gen::<f64>();
     let a = 0.02;
     let b = 0.2;
@@ -109,7 +107,7 @@ fn spiking_network() {
     })));
   }
 
-  for _ in range(0u64, inhibitory_count) {
+  for _ in 0u64..inhibitory_count {
     let r = rng.gen::<f64>();
     let a = 0.02 + (0.08 * r);
     let b = 0.25 - (0.05 * r);
@@ -129,8 +127,8 @@ fn spiking_network() {
     })));
   }
 
-  for n in range(0u64, total_count) {
-    for m in range(0u64, total_count) {
+  for n in 0u64..total_count {
+    for m in 0u64..total_count {
       let weight = if n < excitatory_count { // excitatory
         0.5 * rng.gen::<f64>()
       } else { // inhibitory
@@ -157,8 +155,8 @@ fn spiking_network() {
 
   let norm = Normal::new(0.0, 1.0);
 
-  for _ in range(0, 10) {
-    for n in range(0u64, total_count) {
+  for _ in 0..10 {
+    for n in 0u64..total_count {
       // thalmic input
       let i = if n < excitatory_count {
         5.0 * norm.ind_sample(&mut rng)

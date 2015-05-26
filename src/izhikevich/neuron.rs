@@ -1,10 +1,9 @@
 use std::default::Default;
-use std::num::Float;
 
 use neuron::Neuron;
 use izhikevich::config::IzhikevichConfig;
 
-#[derive(Debug, Copy)]
+#[derive(Debug, Clone, Copy)]
 pub struct IzhikevichNeuron {
   // Membrane potential
   pub v: f64,

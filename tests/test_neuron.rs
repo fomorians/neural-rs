@@ -1,15 +1,11 @@
 #![feature(test)]
-#![feature(old_path)]
-#![feature(std_misc)]
 
 extern crate test;
 extern crate neural;
 extern crate csv;
 
 use std::default::Default;
-use std::num::Float;
-use std::path::{Path, AsPath};
-use std::old_path::Path as PathOld;
+use std::path::Path;
 use std::fs;
 
 use neural::Neuron;
@@ -35,7 +31,7 @@ fn run(t: Test) {
 
   let filepath = path.join(&format!("{}.csv", t.name));
 
-  let mut writer = csv::Writer::from_file(&PathOld::new(filepath.as_path().to_str().unwrap()));
+  let mut writer = csv::Writer::from_file(&filepath.as_path()).unwrap();
   writer.encode(("t", "I", "V", "spike")).ok();
 
   while now < t.timespan {
@@ -93,10 +89,10 @@ fn tonic_spiking() {
 }
 
 #[test]
-fn phastic_spiking() {
+fn phasic_spiking() {
   run(Test{
-    name: "phastic_spiking",
-    config: IzhikevichConfig::phastic_spiking(),
+    name: "phasic_spiking",
+    config: IzhikevichConfig::phasic_spiking(),
     timespan: 200.0,
     tau: 0.25,
     spikes: 1,
@@ -129,10 +125,10 @@ fn tonic_bursting() {
 }
 
 #[test]
-fn phastic_bursting() {
+fn phasic_bursting() {
   run(Test{
-    name: "phastic_bursting",
-    config: IzhikevichConfig::phastic_bursting(),
+    name: "phasic_bursting",
+    config: IzhikevichConfig::phasic_bursting(),
     timespan: 200.0,
     tau: 0.2,
     spikes: 6,
