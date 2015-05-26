@@ -53,7 +53,7 @@ fn run(t: Test) {
 }
 
 #[test]
-fn default_neuron() {
+fn test_neuron_default_neuron() {
   run(Test{
     name: "default",
     config: Default::default(),
@@ -71,7 +71,7 @@ fn default_neuron() {
 }
 
 #[test]
-fn tonic_spiking() {
+fn test_neuron_tonic_spiking() {
   run(Test{
     name: "tonic_spiking",
     config: IzhikevichConfig::tonic_spiking(),
@@ -89,7 +89,7 @@ fn tonic_spiking() {
 }
 
 #[test]
-fn phasic_spiking() {
+fn test_neuron_phasic_spiking() {
   run(Test{
     name: "phasic_spiking",
     config: IzhikevichConfig::phasic_spiking(),
@@ -107,7 +107,7 @@ fn phasic_spiking() {
 }
 
 #[test]
-fn tonic_bursting() {
+fn test_neuron_tonic_bursting() {
   run(Test{
     name: "tonic_bursting",
     config: IzhikevichConfig::tonic_bursting(),
@@ -125,7 +125,7 @@ fn tonic_bursting() {
 }
 
 #[test]
-fn phasic_bursting() {
+fn test_neuron_phasic_bursting() {
   run(Test{
     name: "phasic_bursting",
     config: IzhikevichConfig::phasic_bursting(),
@@ -143,7 +143,7 @@ fn phasic_bursting() {
 }
 
 #[test]
-fn mixed_mode() {
+fn test_neuron_mixed_mode() {
   run(Test{
     name: "mixed_mode",
     config: IzhikevichConfig::mixed_mode(),
@@ -161,7 +161,7 @@ fn mixed_mode() {
 }
 
 #[test]
-fn spike_frequency_adaptation() {
+fn test_neuron_spike_frequency_adaptation() {
   run(Test{
     name: "spike_frequency_adaptation",
     config: IzhikevichConfig::spike_frequency_adaptation(),
@@ -179,7 +179,7 @@ fn spike_frequency_adaptation() {
 }
 
 #[test]
-fn class1() {
+fn test_neuron_class1() {
   run(Test{
     name: "class1",
     config: IzhikevichConfig::class1(),
@@ -197,7 +197,7 @@ fn class1() {
 }
 
 #[test]
-fn class2() {
+fn test_neuron_class2() {
   run(Test{
     name: "class2",
     config: IzhikevichConfig::class2(),
@@ -215,7 +215,7 @@ fn class2() {
 }
 
 #[test]
-fn spike_latency() {
+fn test_neuron_spike_latency() {
   run(Test{
     name: "spike_latency",
     config: IzhikevichConfig::spike_latency(),
@@ -233,7 +233,7 @@ fn spike_latency() {
 }
 
 #[test]
-fn subthreshold_oscillation() {
+fn test_neuron_subthreshold_oscillation() {
   run(Test{
     name: "subthreshold_oscillation",
     config: IzhikevichConfig::subthreshold_oscillation(),
@@ -251,7 +251,7 @@ fn subthreshold_oscillation() {
 }
 
 #[test]
-fn resonator() {
+fn test_neuron_resonator() {
   run(Test{
     name: "resonator",
     config: IzhikevichConfig::resonator(),
@@ -269,7 +269,7 @@ fn resonator() {
 }
 
 #[test]
-fn integrator() {
+fn test_neuron_integrator() {
   run(Test{
     name: "integrator",
     config: IzhikevichConfig::integrator(),
@@ -287,7 +287,7 @@ fn integrator() {
 }
 
 #[test]
-fn rebound_spike() {
+fn test_neuron_rebound_spike() {
   run(Test{
     name: "rebound_spike",
     config: IzhikevichConfig::rebound_spike(),
@@ -305,7 +305,7 @@ fn rebound_spike() {
 }
 
 #[test]
-fn rebound_burst() {
+fn test_neuron_rebound_burst() {
   run(Test{
     name: "rebound_burst",
     config: IzhikevichConfig::rebound_burst(),
@@ -323,7 +323,7 @@ fn rebound_burst() {
 }
 
 #[test]
-fn threshold_variability() {
+fn test_neuron_threshold_variability() {
   run(Test{
     name: "threshold_variability",
     config: IzhikevichConfig::threshold_variability(),
@@ -343,7 +343,7 @@ fn threshold_variability() {
 }
 
 #[test]
-fn bistability() {
+fn test_neuron_bistability() {
   run(Test{
     name: "bistability",
     config: IzhikevichConfig::bistability(),
@@ -361,7 +361,7 @@ fn bistability() {
 }
 
 #[test]
-fn depolarizing_after_potential() {
+fn test_neuron_depolarizing_after_potential() {
   run(Test{
     name: "depolarizing_after_potential",
     config: IzhikevichConfig::depolarizing_after_potential(),
@@ -379,7 +379,7 @@ fn depolarizing_after_potential() {
 }
 
 #[test]
-fn accomodation() {
+fn test_neuron_accomodation() {
   run(Test{
     name: "accomodation",
     config: IzhikevichConfig::accomodation(),
@@ -401,7 +401,7 @@ fn accomodation() {
 }
 
 #[test]
-fn inhibition_induced_spiking() {
+fn test_neuron_inhibition_induced_spiking() {
   run(Test{
     name: "inhibition_induced_spiking",
     config: IzhikevichConfig::inhibition_induced_spiking(),
@@ -419,7 +419,7 @@ fn inhibition_induced_spiking() {
 }
 
 #[test]
-fn inhibition_induced_bursting() {
+fn test_neuron_inhibition_induced_bursting() {
   run(Test{
     name: "inhibition_induced_bursting",
     config: IzhikevichConfig::inhibition_induced_bursting(),

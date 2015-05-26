@@ -39,14 +39,15 @@ fn basic_network() {
 fn test_synapse_direction() {
   let mut network = Network::new(20);
 
-  let neuron = IzhikevichNeuron::new(0.5, Default::default());
+  let neuron = IzhikevichNeuron::new(1.0, Default::default());
   let a = network.add_neuron(Box::new(neuron));
   let b = network.add_neuron(Box::new(neuron));
   assert!(a == 0);
   assert!(b == 1);
 
   let synapse = STDPSynapse::new(STDPConfig{
-    weight: 1000.0,
+    weight: 180.0,
+    max: 180.0,
     ..Default::default()
   });
   let s = network.add_synapse(Box::new(synapse), a, b).unwrap();
