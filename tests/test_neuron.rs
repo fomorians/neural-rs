@@ -21,7 +21,7 @@ struct Test<'a> {
 }
 
 fn run(t: Test) {
-  let mut neuron = IzhikevichNeuron::new(t.config);
+  let mut neuron = IzhikevichNeuron::new(t.tau, t.config);
   let mut now = 0f64;
   let mut spikes = 0;
 
@@ -38,7 +38,7 @@ fn run(t: Test) {
     let ip = (t.input)(now);
     neuron.recv(ip);
 
-    let spike = neuron.tick(t.tau);
+    let spike = neuron.tick();
     if spike != 0.0 {
       spikes = spikes + 1;
     }

@@ -82,7 +82,7 @@ impl <'a> Network<'a> {
     Ok(synapse_id)
   }
 
-  pub fn tick(&mut self, tau: f64) -> (f64, BitVec) {
+  pub fn tick(&mut self) -> (f64, BitVec) {
     let mut spikes = BitVec::from_elem(self.neurons.len(), false);
 
     // drain delayed neuronal firings
@@ -94,8 +94,8 @@ impl <'a> Network<'a> {
 
     // update neurons
     for (sendr_id, neuron) in self.neurons.iter_mut() {
-      let v = neuron.tick(tau);
-      if v == 0.0 {
+      let v = neuron.tick();
+      if v <= 0.0 {
         continue;
       }
 
@@ -116,7 +116,7 @@ impl <'a> Network<'a> {
 
             let spike = Spike{
               recvr_id: recvr_id,
-              v:        v * synapse.weight(),
+              v:        synapse.weight(),
             };
             self.scheduler.schedule(synapse.delay(), spike);
           }
@@ -124,7 +124,7 @@ impl <'a> Network<'a> {
       }
     }
 
-    self.now = self.now + tau;
+    self.now = self.now + 1.0;
 
     (self.now, spikes)
   }
