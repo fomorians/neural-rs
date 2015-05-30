@@ -2,7 +2,6 @@ extern crate wheel_timer;
 
 use std::collections::VecMap;
 use std::collections::vec_map::Entry::{Vacant, Occupied};
-use std::collections::BitVec;
 
 use neuron::Neuron;
 use synapse::Synapse;
@@ -26,13 +25,10 @@ pub struct Network<'a> {
   next_synapse_id: usize,
 
   now: f64,
-
-  tau: f64,
-  tau_count: usize,
 }
 
 impl <'a> Network<'a> {
-  pub fn new(max_delay: usize, tau: f64) -> Network<'a> {
+  pub fn new(max_delay: usize) -> Network<'a> {
     return Network{
       neurons: VecMap::new(),
       synapses: VecMap::new(),
@@ -42,8 +38,6 @@ impl <'a> Network<'a> {
       next_neuron_id: 0,
       next_synapse_id: 0,
       now: 0.0,
-      tau: tau,
-      tau_count: (1f64 / tau) as usize,
     }
   }
 
@@ -88,8 +82,9 @@ impl <'a> Network<'a> {
     }
   }
 
-  pub fn tick(&mut self, ticks: usize) -> (f64, &[f64]) {
-    let mut spikes = Vec::with_capacity(self.neurons.len());
+  // We return a vector of doubles to signal multiple spikes per neuron per group of ticks
+  pub fn tick(&mut self, ticks: usize) -> (f64, Vec<f64>) {
+    let mut spikes: Vec<f64> = vec![0.0; self.neurons.len()];
 
     // drain delayed neuronal firings
     for _ in 0..ticks {
@@ -101,9 +96,7 @@ impl <'a> Network<'a> {
 
       // update neurons
       for (sendr_id, neuron) in self.neurons.iter_mut() {
-        for _ in 0..self.tau_count {
-          neuron.tick(self.tau);
-        }
+        neuron.tick(1.0);
 
         let v = neuron.threshold();
         if v <= 0.0 {

@@ -21,7 +21,7 @@ struct Test<'a> {
 }
 
 fn run(t: Test) {
-  let mut neuron = IzhikevichNeuron::new(t.config);
+  let mut neuron = IzhikevichNeuron::new(t.tau, t.config);
   let mut now = 0f64;
   let mut spikes = 0;
 

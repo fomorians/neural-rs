@@ -45,16 +45,18 @@ pub struct IzhikevichNeuron {
 
   // Special casing for accomodation model...
   is_accomodation: bool,
+
+  tau: f64,
 }
 
 impl Default for IzhikevichNeuron {
   fn default() -> IzhikevichNeuron {
-    IzhikevichNeuron::new(Default::default())
+    IzhikevichNeuron::new(0.5, Default::default())
   }
 }
 
 impl IzhikevichNeuron {
-  pub fn new(config: IzhikevichConfig) -> IzhikevichNeuron {
+  pub fn new(tau: f64, config: IzhikevichConfig) -> IzhikevichNeuron {
     IzhikevichNeuron{
       v: config.v,
       u: config.u,
@@ -65,6 +67,7 @@ impl IzhikevichNeuron {
       e: config.e,
       f: config.f,
       is_accomodation: config.is_accomodation,
+      tau: tau,
       i: 0.0,
     }
   }
@@ -98,12 +101,15 @@ impl Neuron for IzhikevichNeuron {
     // passage of time including the variable recovery factor
     // The recovery factor is updated according to the current
     // potential and itself
-    self.v += tau * (0.04 * (self.v * self.v) + self.e * self.v + self.f - self.u + self.i);
+    let tau_count = (tau / self.tau) as usize;
+    for _ in 0..tau_count {
+      self.v += self.tau * (0.04 * (self.v * self.v) + self.e * self.v + self.f - self.u + self.i);
 
-    self.u += if self.is_accomodation {
-      tau * self.a * (self.b * (self.v + 65.0))
-    } else {
-      tau * self.a * (self.b * self.v - self.u)
-    };
+      self.u += if self.is_accomodation {
+        self.tau * self.a * (self.b * (self.v + 65.0))
+      } else {
+        self.tau * self.a * (self.b * self.v - self.u)
+      };
+    }
   }
 }

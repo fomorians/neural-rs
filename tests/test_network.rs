@@ -19,7 +19,7 @@ use neural::stdp::{STDPSynapse, STDPConfig};
 fn test_network_basic() {
   let mut network = Network::new(20);
 
-  let neuron = IzhikevichNeuron::new(Default::default());
+  let neuron = IzhikevichNeuron::new(1.0, Default::default());
   let a = network.add_neuron(Box::new(neuron));
   let b = network.add_neuron(Box::new(neuron));
   assert!(a == 0);
@@ -29,9 +29,9 @@ fn test_network_basic() {
   let s = network.add_synapse(Box::new(synapse), a, b).unwrap();
   assert!(s == 0);
 
-  network.tick();
-  network.tick();
-  network.tick();
+  network.tick(1);
+  network.tick(1);
+  network.tick(1);
 }
 
 
@@ -39,7 +39,7 @@ fn test_network_basic() {
 fn test_network_synapse_direction() {
   let mut network = Network::new(20);
 
-  let neuron = IzhikevichNeuron::new(Default::default());
+  let neuron = IzhikevichNeuron::new(1.0, Default::default());
   let a = network.add_neuron(Box::new(neuron));
   let b = network.add_neuron(Box::new(neuron));
   assert!(a == 0);
@@ -57,31 +57,31 @@ fn test_network_synapse_direction() {
   assert!(v == 1000.0);
 
   {
-    let (now, spikes) = network.tick();
+    let (now, spikes) = network.tick(1);
     assert!(now == 1.0);
-    assert!(spikes.get(0) == Some(true));
-    assert!(spikes.get(1) == Some(false));
+    assert!(spikes.get(0) == Some(&30.0));
+    assert!(spikes.get(1) == Some(&0.0));
   }
 
   {
-    let (now, spikes) = network.tick();
+    let (now, spikes) = network.tick(1);
     assert!(now == 2.0);
-    assert!(spikes.get(0) == Some(false));
-    assert!(spikes.get(1) == Some(false));
+    assert!(spikes.get(0) == Some(&0.0));
+    assert!(spikes.get(1) == Some(&0.0));
   }
 
   {
-    let (now, spikes) = network.tick();
+    let (now, spikes) = network.tick(1);
     assert!(now == 3.0);
-    assert!(spikes.get(0) == Some(false));
-    assert!(spikes.get(1) == Some(true));
+    assert!(spikes.get(0) == Some(&0.0));
+    assert!(spikes.get(1) == Some(&30.0));
   }
 
   {
-    let (now, spikes) = network.tick();
+    let (now, spikes) = network.tick(1);
     assert!(now == 4.0);
-    assert!(spikes.get(0) == Some(false));
-    assert!(spikes.get(1) == Some(false));
+    assert!(spikes.get(0) == Some(&0.0));
+    assert!(spikes.get(1) == Some(&0.0));
   }
 }
 
@@ -115,7 +115,7 @@ fn test_network_spiking() {
     let v = -65.0;
     let u = b * v;
 
-    network.add_neuron(Box::new(IzhikevichNeuron::new(IzhikevichConfig{
+    network.add_neuron(Box::new(IzhikevichNeuron::new(0.5, IzhikevichConfig{
       v: v,
       u: u,
       a: a,
@@ -135,7 +135,7 @@ fn test_network_spiking() {
     let v = -65.0;
     let u = b * v;
 
-    network.add_neuron(Box::new(IzhikevichNeuron::new(IzhikevichConfig{
+    network.add_neuron(Box::new(IzhikevichNeuron::new(0.5, IzhikevichConfig{
       v: v,
       u: u,
       a: a,
@@ -186,18 +186,18 @@ fn test_network_spiking() {
       network.recv(n, i);
     }
 
-    let (now, spikes) = network.tick();
+    let (now, spikes) = network.tick(1);
 
     if now > 1000.0 {
       break;
     }
 
-    let rate = spikes.iter().filter(|x| *x).count();
+    let rate = spikes.iter().filter(|&x| *x > 0.0).count();
     // println!("{:?}", (now, rate));
     writer_rate.encode((now, rate)).unwrap();
 
-    for (i, n) in spikes.iter().enumerate() {
-      if n {
+    for (i, &n) in spikes.iter().enumerate() {
+      if n > 0.0 {
         writer_spikes.encode((now, i)).unwrap();
       }
     }
@@ -233,7 +233,7 @@ fn test_network_stdp() {
     let v = c;
     let u = b * v;
 
-    network.add_neuron(Box::new(IzhikevichNeuron::new(IzhikevichConfig{
+    network.add_neuron(Box::new(IzhikevichNeuron::new(0.5, IzhikevichConfig{
       v: v,
       u: u,
       a: a,
@@ -252,7 +252,7 @@ fn test_network_stdp() {
     let v = c;
     let u = b * v;
 
-    network.add_neuron(Box::new(IzhikevichNeuron::new(IzhikevichConfig{
+    network.add_neuron(Box::new(IzhikevichNeuron::new(0.5, IzhikevichConfig{
       v: v,
       u: u,
       a: a,
@@ -317,20 +317,20 @@ fn test_network_stdp() {
       network.recv(n, i);
     }
 
-    let (now, spikes) = network.tick();
+    let (now, spikes) = network.tick(1);
 
-    if now > 5.0 * 1000.0 {
+    if now > 1000.0 {
       break;
     }
 
-    let rate = spikes.iter().filter(|x| *x).count();
+    let rate = spikes.iter().filter(|&x| *x > 0.0).count();
     if now % 1000.0 == 0.0 {
       println!("{:?}s", now / 1000.0);
     }
     writer_rate.encode((now, rate)).unwrap();
 
-    for (i, n) in spikes.iter().enumerate() {
-      if n {
+    for (i, &n) in spikes.iter().enumerate() {
+      if n > 0.0 {
         writer_spikes.encode((now, i)).unwrap();
       }
     }
