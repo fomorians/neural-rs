@@ -16,10 +16,10 @@ use neural::izhikevich::{IzhikevichNeuron, IzhikevichConfig};
 use neural::stdp::{STDPSynapse, STDPConfig};
 
 #[test]
-fn basic_network() {
+fn test_network_basic() {
   let mut network = Network::new(20);
 
-  let neuron = IzhikevichNeuron::new(0.5, Default::default());
+  let neuron = IzhikevichNeuron::new(Default::default());
   let a = network.add_neuron(Box::new(neuron));
   let b = network.add_neuron(Box::new(neuron));
   assert!(a == 0);
@@ -36,10 +36,10 @@ fn basic_network() {
 
 
 #[test]
-fn test_synapse_direction() {
+fn test_network_synapse_direction() {
   let mut network = Network::new(20);
 
-  let neuron = IzhikevichNeuron::new(1.0, Default::default());
+  let neuron = IzhikevichNeuron::new(Default::default());
   let a = network.add_neuron(Box::new(neuron));
   let b = network.add_neuron(Box::new(neuron));
   assert!(a == 0);
@@ -86,7 +86,7 @@ fn test_synapse_direction() {
 }
 
 #[test]
-fn spiking_network() {
+fn test_network_spiking() {
   let path = Path::new(&std::env::current_dir().unwrap())
     .join("tests/results/");
   fs::create_dir_all(&path).ok();
@@ -102,11 +102,11 @@ fn spiking_network() {
   let mut rng = rand::thread_rng();
   let mut network = Network::new(20);
 
-  let excitatory_count = 800u64;
-  let inhibitory_count = 200u64;
+  let excitatory_count = 800;
+  let inhibitory_count = 200;
   let total_count = excitatory_count + inhibitory_count;
 
-  for _ in 0u64..excitatory_count {
+  for _ in 0..excitatory_count {
     let r = rng.gen::<f64>();
     let a = 0.02;
     let b = 0.2;
@@ -115,7 +115,7 @@ fn spiking_network() {
     let v = -65.0;
     let u = b * v;
 
-    network.add_neuron(Box::new(IzhikevichNeuron::new(0.5, IzhikevichConfig{
+    network.add_neuron(Box::new(IzhikevichNeuron::new(IzhikevichConfig{
       v: v,
       u: u,
       a: a,
@@ -126,7 +126,7 @@ fn spiking_network() {
     })));
   }
 
-  for _ in 0u64..inhibitory_count {
+  for _ in 0..inhibitory_count {
     let r = rng.gen::<f64>();
     let a = 0.02 + (0.08 * r);
     let b = 0.25 - (0.05 * r);
@@ -135,7 +135,7 @@ fn spiking_network() {
     let v = -65.0;
     let u = b * v;
 
-    network.add_neuron(Box::new(IzhikevichNeuron::new(0.5, IzhikevichConfig{
+    network.add_neuron(Box::new(IzhikevichNeuron::new(IzhikevichConfig{
       v: v,
       u: u,
       a: a,
@@ -146,8 +146,8 @@ fn spiking_network() {
     })));
   }
 
-  for n in 0u64..total_count {
-    for m in 0u64..total_count {
+  for n in 0..total_count {
+    for m in 0..total_count {
       let weight = if n < excitatory_count { // excitatory
         0.5 * rng.gen::<f64>()
       } else { // inhibitory
@@ -174,7 +174,7 @@ fn spiking_network() {
 
   let norm = Normal::new(0.0, 1.0);
 
-  for _ in 0..1000 {
+  loop {
     for n in 0..total_count {
       // thalmic input
       let i = if n < excitatory_count {
@@ -187,8 +187,13 @@ fn spiking_network() {
     }
 
     let (now, spikes) = network.tick();
+
+    if now > 1000.0 {
+      break;
+    }
+
     let rate = spikes.iter().filter(|x| *x).count();
-    println!("{:?}", (now, rate));
+    // println!("{:?}", (now, rate));
     writer_rate.encode((now, rate)).unwrap();
 
     for (i, n) in spikes.iter().enumerate() {
@@ -200,7 +205,7 @@ fn spiking_network() {
 }
 
 #[test]
-fn stdp_network() {
+fn test_network_stdp() {
   let path = Path::new(&std::env::current_dir().unwrap())
     .join("tests/results/");
   fs::create_dir_all(&path).ok();
@@ -228,7 +233,7 @@ fn stdp_network() {
     let v = c;
     let u = b * v;
 
-    network.add_neuron(Box::new(IzhikevichNeuron::new(0.5, IzhikevichConfig{
+    network.add_neuron(Box::new(IzhikevichNeuron::new(IzhikevichConfig{
       v: v,
       u: u,
       a: a,
@@ -247,7 +252,7 @@ fn stdp_network() {
     let v = c;
     let u = b * v;
 
-    network.add_neuron(Box::new(IzhikevichNeuron::new(0.5, IzhikevichConfig{
+    network.add_neuron(Box::new(IzhikevichNeuron::new(IzhikevichConfig{
       v: v,
       u: u,
       a: a,
@@ -265,7 +270,7 @@ fn stdp_network() {
     let mut i = 0;
 
     while i < connectivity {
-      let m = rng.gen_range::<u64>(0, total_count);
+      let m = rng.gen_range::<usize>(0, total_count);
       if n == m { // try again
         continue;
       }
@@ -301,7 +306,7 @@ fn stdp_network() {
     }
   }
 
-  for _ in 0..60000 {
+  loop {
     for n in 0..total_count {
       // thalmic input
       let i = if rng.gen::<f64>() > 0.5 {
@@ -313,8 +318,15 @@ fn stdp_network() {
     }
 
     let (now, spikes) = network.tick();
+
+    if now > 5.0 * 1000.0 {
+      break;
+    }
+
     let rate = spikes.iter().filter(|x| *x).count();
-    println!("{:?}", (now, rate));
+    if now % 1000.0 == 0.0 {
+      println!("{:?}s", now / 1000.0);
+    }
     writer_rate.encode((now, rate)).unwrap();
 
     for (i, n) in spikes.iter().enumerate() {

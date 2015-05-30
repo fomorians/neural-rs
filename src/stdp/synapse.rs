@@ -41,7 +41,7 @@ impl STDPSynapse {
   }
 
   fn a_pos(&self) -> f64 {
-    return if self.scale {
+    if self.scale {
       self.n_pos * (self.max - self.weight)
     } else {
       self.n_pos
@@ -49,7 +49,7 @@ impl STDPSynapse {
   }
 
   fn a_neg(&self) -> f64 {
-    return if self.scale {
+    if self.scale {
       self.n_neg * (self.min - self.weight)
     } else {
       self.n_neg

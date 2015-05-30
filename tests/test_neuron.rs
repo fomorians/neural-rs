@@ -21,7 +21,7 @@ struct Test<'a> {
 }
 
 fn run(t: Test) {
-  let mut neuron = IzhikevichNeuron::new(t.tau, t.config);
+  let mut neuron = IzhikevichNeuron::new(t.config);
   let mut now = 0f64;
   let mut spikes = 0;
 
@@ -32,18 +32,20 @@ fn run(t: Test) {
   let filepath = path.join(&format!("{}.csv", t.name));
 
   let mut writer = csv::Writer::from_file(&filepath.as_path()).unwrap();
-  writer.encode(("t", "I", "V", "spike")).ok();
+  writer.encode(("t", "I", "V", "u", "spike")).ok();
 
   while now < t.timespan {
     let ip = (t.input)(now);
     neuron.recv(ip);
+    neuron.tick(t.tau);
 
-    let spike = neuron.tick();
-    if spike != 0.0 {
+    let spike = neuron.threshold();
+    if spike > 0.0 {
+      neuron.reset();
       spikes = spikes + 1;
     }
 
-    writer.encode((now, ip, neuron.v, spike)).ok();
+    writer.encode((now, ip, neuron.v, neuron.u, spike)).ok();
 
     now = now + t.tau;
   }

@@ -3,6 +3,8 @@ use std::default::Default;
 use neuron::Neuron;
 use izhikevich::config::IzhikevichConfig;
 
+const V_PEAK: f64 = 30.0;
+
 #[derive(Debug, Clone, Copy)]
 pub struct IzhikevichNeuron {
   // Membrane potential
@@ -10,9 +12,6 @@ pub struct IzhikevichNeuron {
 
   // Membrane recovery
   pub u: f64,
-
-  // Membrane recovery (starting)
-  pub u_start: f64,
 
   // Describes accumulated membrane potential before updating.
   i: f64,
@@ -46,25 +45,19 @@ pub struct IzhikevichNeuron {
 
   // Special casing for accomodation model...
   is_accomodation: bool,
-
-  v_peak: f64,
-
-  tau: f64,
-  tau_count: usize,
 }
 
 impl Default for IzhikevichNeuron {
   fn default() -> IzhikevichNeuron {
-    IzhikevichNeuron::new(0.5, Default::default())
+    IzhikevichNeuron::new(Default::default())
   }
 }
 
 impl IzhikevichNeuron {
-  pub fn new(tau: f64, config: IzhikevichConfig) -> IzhikevichNeuron {
+  pub fn new(config: IzhikevichConfig) -> IzhikevichNeuron {
     IzhikevichNeuron{
       v: config.v,
       u: config.u,
-      u_start: config.u,
       a: config.a,
       b: config.b,
       c: config.c,
@@ -73,9 +66,6 @@ impl IzhikevichNeuron {
       f: config.f,
       is_accomodation: config.is_accomodation,
       i: 0.0,
-      v_peak: 30.0,
-      tau: tau,
-      tau_count: (1f64 / tau) as usize,
     }
   }
 }
@@ -86,29 +76,34 @@ impl Neuron for IzhikevichNeuron {
     self.i
   }
 
-  fn tick(&mut self) -> f64 {
+  fn threshold(&mut self) -> f64 {
+    // We reset `i` here to allow multiple neuron ticks,
+    // per network tick, to make use of its value.
+    self.i = 0.0;
+
+    if self.v >= V_PEAK {
+      V_PEAK
+    } else {
+      0.0
+    }
+  }
+
+  fn reset(&mut self) {
+    self.v = self.c;
+    self.u += self.d;
+  }
+
+  fn tick(&mut self, tau: f64) {
     // The potential updates according to the input and the
     // passage of time including the variable recovery factor
     // The recovery factor is updated according to the current
     // potential and itself
-    for _ in 0..self.tau_count {
-      self.v += self.tau * (0.04 * (self.v * self.v) + self.e * self.v + self.f - self.u + self.i);
-    }
+    self.v += tau * (0.04 * (self.v * self.v) + self.e * self.v + self.f - self.u + self.i);
 
     self.u += if self.is_accomodation {
-      self.a * (self.b * (self.v + 65.0))
+      tau * self.a * (self.b * (self.v + 65.0))
     } else {
-      self.a * (self.b * self.v - self.u)
+      tau * self.a * (self.b * self.v - self.u)
     };
-
-    self.i = 0.0;
-
-    if self.v >= self.v_peak {
-      self.v = self.c;
-      self.u += self.d;
-      self.v_peak
-    } else {
-      0.0
-    }
   }
 }
