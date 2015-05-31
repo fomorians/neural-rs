@@ -41,6 +41,10 @@ impl <'a> Network<'a> {
     }
   }
 
+  pub fn len(&self) -> usize {
+    self.neurons.len()
+  }
+
   pub fn add_neuron(&mut self, neuron: Box<Neuron + 'a>) -> usize {
     let neuron_id = self.next_neuron_id;
     self.next_neuron_id = neuron_id + 1;
@@ -82,10 +86,7 @@ impl <'a> Network<'a> {
     }
   }
 
-  // We return a vector of doubles to signal multiple spikes per neuron per group of ticks
-  pub fn tick(&mut self, ticks: usize) -> (f64, Vec<f64>) {
-    let mut spikes: Vec<f64> = vec![0.0; self.neurons.len()];
-
+  pub fn tick(&mut self, ticks: usize, spikes: &mut [f64]) -> f64 {
     // drain delayed neuronal firings
     for _ in 0..ticks {
       for spike in self.scheduler.tick().iter() {
@@ -132,6 +133,6 @@ impl <'a> Network<'a> {
       self.now = self.now + 1.0;
     }
 
-    (self.now, spikes)
+    self.now
   }
 }
