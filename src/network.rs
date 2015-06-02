@@ -79,11 +79,10 @@ impl <'a> Network<'a> {
     Ok(synapse_id)
   }
 
-  pub fn recv(&mut self, neuron_id: usize, i: f64) -> f64 {
-    match self.neurons.get_mut(&neuron_id) {
-      Some(neuron) => neuron.recv(i),
-      None => 0f64,
-    }
+  pub fn recv(&mut self, inputs: &[f64]) {
+      for (i, input) in inputs.iter().enumerate() {
+          self.neurons[i].recv(*input);
+      }
   }
 
   pub fn tick(&mut self, ticks: usize, spikes: &mut [f64]) -> f64 {
