@@ -41,8 +41,12 @@ impl <'a> Network<'a> {
     }
   }
 
-  pub fn len(&self) -> usize {
+  pub fn get_neuron_count(&self) -> usize {
     self.neurons.len()
+  }
+
+  pub fn get_synapse_count(&self) -> usize {
+    self.synapses.len()
   }
 
   pub fn add_neuron(&mut self, neuron: Box<Neuron + 'a>) -> usize {
@@ -79,15 +83,13 @@ impl <'a> Network<'a> {
     Ok(synapse_id)
   }
 
-  pub fn recv(&mut self, inputs: &[f64]) {
+  pub fn tick(&mut self, ticks: usize, inputs: &[f64], outputs: &mut [f64]) -> f64 {
+    // drain delayed neuronal firings
+    for _ in 0..ticks {
       for (i, input) in inputs.iter().enumerate() {
           self.neurons[i].recv(*input);
       }
-  }
 
-  pub fn tick(&mut self, ticks: usize, spikes: &mut [f64]) -> f64 {
-    // drain delayed neuronal firings
-    for _ in 0..ticks {
       for spike in self.scheduler.tick().iter() {
         if let Some(neuron) = self.neurons.get_mut(&spike.recvr_id) {
           neuron.recv(spike.v);
@@ -103,7 +105,7 @@ impl <'a> Network<'a> {
           continue;
         }
 
-        spikes[sendr_id] += v;
+        outputs[sendr_id] += v;
         neuron.reset();
 
         if let Some(recv_synapses) = self.recv_synapses.get_mut(&sendr_id) {
