@@ -6,6 +6,14 @@ neural-rs is a spiking neural network library for Rust (similar to [Brian2](http
 TODO
 ---
 
+#### Rolling synaptic updates
+
+#### NeuronGroup for better vectorization
+
+#### OpenCL
+
+#### Reinforcement learning via dopamine saturation
+
 #### Implement AdEx model
 
 I haven't used it but its supposed to be better for a number of reasons: http://www.scholarpedia.org/article/Adaptive_exponential_integrate-and-fire_model
