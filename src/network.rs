@@ -1,7 +1,8 @@
 extern crate wheel_timer;
+extern crate vec_map;
 
-use std::collections::VecMap;
-use std::collections::vec_map::Entry::{Vacant, Occupied};
+use self::vec_map::VecMap;
+use self::vec_map::Entry::{Vacant, Occupied};
 
 use neuron::Neuron;
 use synapse::Synapse;

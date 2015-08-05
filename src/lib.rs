@@ -1,7 +1,5 @@
 #![allow(unused_attributes)]
 
-#![feature(collections)]
-
 pub use self::network::Network;
 pub use self::neuron::Neuron;
 pub use self::synapse::Synapse;
