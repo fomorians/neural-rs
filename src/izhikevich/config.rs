@@ -1,6 +1,7 @@
 use std::default::Default;
 
 #[derive(Debug, Clone, Copy)]
+#[repr(C)]
 pub struct IzhikevichConfig {
   pub v: f64,
   pub u: f64,

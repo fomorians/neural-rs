@@ -1,6 +1,7 @@
 use std::default::Default;
 
 #[derive(Debug, Clone, Copy)]
+#[repr(C)]
 pub struct STDPConfig {
   pub weight: f64,
   pub min: f64,
