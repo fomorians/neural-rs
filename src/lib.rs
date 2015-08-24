@@ -12,5 +12,6 @@ pub mod trace;
 
 pub mod izhikevich;
 pub mod stdp;
+pub mod traces;
 
 mod spike;
