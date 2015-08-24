@@ -1,6 +1,6 @@
 use synapse::Synapse;
 use trace::Trace;
-use traces::LinTrace;
+use traces::ExpTrace;
 use stdp::config::STDPConfig;
 
 #[derive(Debug, Clone, Copy)]
@@ -13,8 +13,8 @@ pub struct STDPSynapse {
   n_pos: f64,
   n_neg: f64,
 
-  pre_trace: LinTrace,
-  post_trace: LinTrace,
+  pre_trace: ExpTrace,
+  post_trace: ExpTrace,
 
   a_pos: f64,
   a_neg: f64,
@@ -27,8 +27,8 @@ pub struct STDPSynapse {
 impl STDPSynapse {
   pub fn new(config: STDPConfig) -> STDPSynapse {
     return STDPSynapse{
-      pre_trace: LinTrace::new(config.tau_pos, config.continuous),
-      post_trace: LinTrace::new(config.tau_neg, config.continuous),
+      pre_trace: ExpTrace::new(config.tau_pos, config.continuous),
+      post_trace: ExpTrace::new(config.tau_neg, config.continuous),
       weight: config.weight,
       n_pos: config.n_pos,
       n_neg: config.n_neg,

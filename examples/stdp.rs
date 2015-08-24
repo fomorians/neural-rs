@@ -29,6 +29,8 @@ fn main() {
   let mut rng = rand::thread_rng();
   let mut network = Network::new(20);
 
+  let duration = 10000.0;
+
   let excitatory_count = 800;
   let inhibitory_count = 200;
   let total_count = excitatory_count + inhibitory_count;
@@ -135,7 +137,7 @@ fn main() {
 
     let now = network.tick(1, inp, oup);
 
-    if now > 1000.0 {
+    if now > duration {
       break;
     }
 
@@ -143,10 +145,10 @@ fn main() {
     println!("{:?}", (now, rate));
     writer_rate.encode((now, rate)).unwrap();
 
-    // for (n, &i) in oup.iter().enumerate() {
-    //   if i > 0.0 {
-    //     writer_spikes.encode((now, n)).unwrap();
-    //   }
-    // }
+    for (n, &i) in oup.iter().enumerate() {
+      if i > 0.0 {
+        writer_spikes.encode((now, n)).unwrap();
+      }
+    }
   }
 }
