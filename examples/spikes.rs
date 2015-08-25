@@ -30,7 +30,7 @@ fn main() {
   let mut rng = rand::thread_rng();
   let mut network = Network::new(20);
 
-  let duration = 10000.0;
+  let duration = 1000.0;
 
   let excitatory_count = 800;
   let inhibitory_count = 200;
@@ -107,8 +107,8 @@ fn main() {
   let mut vinp = vec![0.0; 1000];
   let mut voup = vec![0.0; 1000];
 
-  let mut inp = vinp.as_mut_slice();
-  let mut oup = voup.as_mut_slice();
+  let inp = vinp.as_mut_slice();
+  let oup = voup.as_mut_slice();
 
   loop {
     for n in 0..total_count {
