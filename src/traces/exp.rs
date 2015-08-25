@@ -10,19 +10,16 @@ pub struct ExpTrace {
   continuous: bool
 }
 
-impl ExpTrace {
-
-  pub fn new(half_life: f64, continuous: bool) -> ExpTrace {
-    return ExpTrace{
+impl Trace for ExpTrace {
+  fn new(half_life: f64, continuous: bool) -> Self {
+    ExpTrace {
       continuous: continuous,
       half_life: half_life,
       last_time: 0.0,
       value: 0.0
-    };
+    }
   }
-}
 
-impl Trace for ExpTrace {
   fn read(&mut self, now: f64) -> f64 {
     if self.last_time != 0.0 {
       // half-life decay

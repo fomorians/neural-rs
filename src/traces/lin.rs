@@ -10,19 +10,16 @@ pub struct LinTrace {
   continuous: bool
 }
 
-impl LinTrace {
-
-  pub fn new(half_life: f64, continuous: bool) -> LinTrace {
-    return LinTrace{
+impl Trace for LinTrace {
+  fn new(half_life: f64, continuous: bool) -> Self {
+    LinTrace {
       continuous: continuous,
       half_life: half_life,
       last_time: 0.0,
       value: 0.0
-    };
+    }
   }
-}
 
-impl Trace for LinTrace {
   fn read(&mut self, now: f64) -> f64 {
     if self.last_time != 0.0 {
       // half-life decay

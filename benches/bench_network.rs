@@ -14,6 +14,7 @@ use rand::distributions::{Normal, IndependentSample};
 use neural::Network;
 use neural::izhikevich::{IzhikevichNeuron, IzhikevichConfig};
 use neural::stdp::{STDPSynapse, STDPConfig};
+use neural::traces::ExpTrace;
 
 #[bench]
 fn bench_network_tick(bn: &mut Bencher) {
@@ -72,7 +73,7 @@ fn bench_network_tick(bn: &mut Bencher) {
         -1.0 * rng.gen::<f64>()
       };
 
-      let synapse = STDPSynapse::new(STDPConfig{
+      let synapse = STDPSynapse::<ExpTrace>::new(STDPConfig{
         weight: weight,
         min: -10.0,
         max: 10.0,

@@ -10,6 +10,7 @@ use std::fs;
 
 use neural::Synapse;
 use neural::stdp::STDPSynapse;
+use neural::traces::ExpTrace;
 
 #[test]
 fn test_synapse_ltp() {
@@ -24,7 +25,7 @@ fn test_synapse_ltp() {
 
   let mut tau = 0.0;
   while tau < 40.0 {
-    let mut synapse = STDPSynapse::new(Default::default());
+    let mut synapse = STDPSynapse::<ExpTrace>::new(Default::default());
     let mut now = 0.0;
 
     synapse.pre_recv(now);
@@ -55,7 +56,7 @@ fn test_synapse_ltd() {
 
   let mut tau = 0.0;
   while tau < 40.0 {
-    let mut synapse = STDPSynapse::new(Default::default());
+    let mut synapse = STDPSynapse::<ExpTrace>::new(Default::default());
     let mut now = 0.0;
 
     synapse.post_recv(now);

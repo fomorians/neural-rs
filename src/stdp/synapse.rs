@@ -1,10 +1,9 @@
 use synapse::Synapse;
 use trace::Trace;
-use traces::ExpTrace;
 use stdp::config::STDPConfig;
 
 #[derive(Debug, Clone, Copy)]
-pub struct STDPSynapse {
+pub struct STDPSynapse<T: Trace> {
   weight: f64,
 
   min: f64,
@@ -13,8 +12,8 @@ pub struct STDPSynapse {
   n_pos: f64,
   n_neg: f64,
 
-  pre_trace: ExpTrace,
-  post_trace: ExpTrace,
+  pre_trace: T,
+  post_trace: T,
 
   a_pos: f64,
   a_neg: f64,
@@ -24,11 +23,11 @@ pub struct STDPSynapse {
   scale: bool,
 }
 
-impl STDPSynapse {
-  pub fn new(config: STDPConfig) -> STDPSynapse {
+impl<T: Trace> STDPSynapse<T> {
+  pub fn new(config: STDPConfig) -> STDPSynapse<T> {
     return STDPSynapse{
-      pre_trace: ExpTrace::new(config.tau_pos, config.continuous),
-      post_trace: ExpTrace::new(config.tau_neg, config.continuous),
+      pre_trace: T::new(config.tau_pos, config.continuous),
+      post_trace: T::new(config.tau_neg, config.continuous),
       weight: config.weight,
       n_pos: config.n_pos,
       n_neg: config.n_neg,
@@ -67,7 +66,7 @@ impl STDPSynapse {
   }
 }
 
-impl Synapse for STDPSynapse {
+impl<T: Trace> Synapse for STDPSynapse<T> {
   fn weight(&self) -> f64 {
     self.weight
   }

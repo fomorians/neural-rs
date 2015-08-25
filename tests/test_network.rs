@@ -9,6 +9,7 @@ use std::default::Default;
 use neural::Network;
 use neural::izhikevich::IzhikevichNeuron;
 use neural::stdp::{STDPSynapse, STDPConfig};
+use neural::traces::ExpTrace;
 
 #[test]
 fn test_network() {
@@ -20,7 +21,7 @@ fn test_network() {
   assert!(a == 0);
   assert!(b == 1);
 
-  let synapse = STDPSynapse::new(STDPConfig{
+  let synapse = STDPSynapse::<ExpTrace>::new(STDPConfig{
     weight: 180.0,
     max: 180.0,
     ..Default::default()
