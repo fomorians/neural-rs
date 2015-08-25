@@ -1,4 +1,5 @@
 #![feature(test)]
+#![feature(convert)]
 
 extern crate test;
 extern crate neural;
@@ -15,40 +16,7 @@ use neural::izhikevich::{IzhikevichNeuron, IzhikevichConfig};
 use neural::stdp::{STDPSynapse, STDPConfig};
 
 #[bench]
-fn bench_network_neurons(bn: &mut Bencher) {
-  let mut network = Network::new(20);
-  let total_count = 1000;
-
-  for _ in 0..total_count {
-    let a = 0.02;
-    let b = 0.2;
-    let c = -65.0;
-    let d = 8.0;
-    let v = c;
-    let u = b * v;
-
-    network.add_neuron(Box::new(IzhikevichNeuron::new(0.5, IzhikevichConfig{
-      v: v,
-      u: u,
-      a: a,
-      b: b,
-      c: c,
-      d: d,
-      ..Default::default()
-    })));
-  }
-
-  bn.iter(|| {
-    for n in 0..total_count {
-      network.recv(n, 5.0);
-    }
-
-    network.tick();
-  });
-}
-
-#[bench]
-fn bench_network_synapses(bn: &mut Bencher) {
+fn bench_network_tick(bn: &mut Bencher) {
   let mut rng = rand::thread_rng();
   let mut network = Network::new(20);
 
@@ -124,6 +92,12 @@ fn bench_network_synapses(bn: &mut Bencher) {
 
   let norm = Normal::new(0.0, 1.0);
 
+  let mut vinp = vec![0.0; 1000];
+  let mut voup = vec![0.0; 1000];
+
+  let inp = vinp.as_mut_slice();
+  let oup = voup.as_mut_slice();
+
   bn.iter(|| {
     for n in 0..total_count {
       // thalmic input
@@ -133,9 +107,10 @@ fn bench_network_synapses(bn: &mut Bencher) {
         2.0 * norm.ind_sample(&mut rng)
       };
 
-      network.recv(n, i);
+      inp[n] = i;
+      oup[n] = 0.0
     }
 
-    network.tick();
+    network.tick(1, inp, oup);
   });
 }

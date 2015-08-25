@@ -4,26 +4,29 @@ extern crate test;
 extern crate neural;
 
 use test::Bencher;
+use std::default::Default;
 
 use neural::synapse::Synapse;
-use neural::stdp::{STDPSynapse, STDPConfig};
+use neural::stdp::STDPSynapse;
+use neural::sym::SymSynapse;
 
 #[bench]
-fn bench_synapse(bn: &mut Bencher) {
-  let mut synapse = STDPSynapse::new(STDPConfig{
-    weight: 1.0,
-    min: -10.0,
-    max: 10.0,
-    n_pos: 0.1,
-    n_neg: -0.12,
-    tau_pos: 20.0,
-    tau_neg: 20.0,
-    a_pos: 1.0,
-    a_neg: 1.0,
-    continuous: false,
-    scale: false,
-    delay: 1,
+fn bench_stdp_synapse(bn: &mut Bencher) {
+  let mut synapse = STDPSynapse::new(Default::default());
+
+  let mut now = 0.0;
+  bn.iter(|| {
+    synapse.pre_recv(now);
+    now = now + 1.0;
+
+    synapse.post_recv(now);
+    now = now + 1.0;
   });
+}
+
+#[bench]
+fn bench_sym_synapse(bn: &mut Bencher) {
+  let mut synapse = SymSynapse::new(Default::default());
 
   let mut now = 0.0;
   bn.iter(|| {
