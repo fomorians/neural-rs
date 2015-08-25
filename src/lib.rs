@@ -12,6 +12,7 @@ pub mod trace;
 
 pub mod izhikevich;
 pub mod stdp;
+pub mod sym;
 pub mod traces;
 
 mod spike;

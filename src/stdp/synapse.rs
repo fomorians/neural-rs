@@ -56,6 +56,15 @@ impl STDPSynapse {
       self.n_neg
     }
   }
+
+  fn integrate(&mut self, delta: f64) {
+    self.weight = self.weight + delta;
+    if self.weight > self.max {
+      self.weight = self.max;
+    } else if self.weight < self.min {
+      self.weight = self.min;
+    }
+  }
 }
 
 impl Synapse for STDPSynapse {
@@ -77,15 +86,7 @@ impl Synapse for STDPSynapse {
     // by an amount proportional to the trace y left by previous
     // post-synaptic spikes
     let delta = self.a_neg() * self.post_trace.read(now); // decay before using value
-
-    self.weight = self.weight + delta;
-
-    if self.weight > self.max {
-      self.weight = self.max;
-    } else if self.weight < self.min {
-      self.weight = self.min;
-    }
-
+    self.integrate(delta);
     delta
   }
 
@@ -99,15 +100,7 @@ impl Synapse for STDPSynapse {
     // by an amount that depends on the value of the trace x left
     // by the pre-synaptic spike.
     let delta = self.a_pos() * self.pre_trace.read(now); // decay before using value
-
-    self.weight = self.weight + delta;
-
-    if self.weight > self.max {
-      self.weight = self.max;
-    } else if self.weight < self.min {
-      self.weight = self.min;
-    }
-
+    self.integrate(delta);
     delta
   }
 }
