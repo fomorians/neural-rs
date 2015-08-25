@@ -98,6 +98,22 @@ fn bench_network_tick(bn: &mut Bencher) {
   let inp = vinp.as_mut_slice();
   let oup = voup.as_mut_slice();
 
+  for _ in 0..300 {
+    for n in 0..total_count {
+      // thalmic input
+      let i = if n < excitatory_count {
+        5.0 * norm.ind_sample(&mut rng)
+      } else {
+        2.0 * norm.ind_sample(&mut rng)
+      };
+
+      inp[n] = i;
+      oup[n] = 0.0
+    }
+
+    network.tick(1, inp, oup);
+  }
+
   bn.iter(|| {
     for n in 0..total_count {
       // thalmic input
