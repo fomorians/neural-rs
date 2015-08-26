@@ -74,12 +74,14 @@ impl <'a> Network<'a> {
             Occupied(entry) => entry.into_mut(),
         };
         send_synapses.push((recvr_id, synapse_id));
+        // println!("send: sendr_id: {:?} send_synapses: {:?}", sendr_id, send_synapses.len());
 
         let recv_synapses = match self.recv_synapses.entry(recvr_id) {
             Vacant(entry) => entry.insert(Vec::new()),
             Occupied(entry) => entry.into_mut(),
         };
         recv_synapses.push(synapse_id);
+        // println!("recv: recv_id: {:?} recv_synapses: {:?}", recvr_id, recv_synapses.len());
 
         Ok(synapse_id)
     }

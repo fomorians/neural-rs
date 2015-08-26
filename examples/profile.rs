@@ -1,14 +1,11 @@
 #![feature(convert)]
 
 extern crate neural;
-extern crate rand;
 extern crate csv;
 
 use std::default::Default;
 use std::path::Path;
 use std::fs;
-use rand::Rng;
-use rand::distributions::{Normal, IndependentSample};
 
 use neural::Network;
 use neural::izhikevich::{IzhikevichNeuron, IzhikevichConfig};
@@ -28,11 +25,10 @@ fn main() {
   let mut writer_rate = csv::Writer::from_file(filepath_rate.as_path()).unwrap();
   writer_rate.encode(("t", "rate")).ok();
 
-  let mut rng = rand::thread_rng();
   let mut network = Network::new(20);
 
-  let duration = 1000.0;
-  let total_count = 1000;
+  let duration = 10000.0;
+  let total_count = 100;
 
   for _ in 0..total_count {
     let a = 0.02;
@@ -56,9 +52,9 @@ fn main() {
   for n in 0..total_count {
     for m in 0..total_count {
       let synapse = STDPSynapse::<ExpTrace>::new(STDPConfig{
-        weight: 1.0,
-        min: -10.0,
-        max: 10.0,
+        weight: 30.0,
+        min: -30.0,
+        max: 30.0,
         n_pos: 0.0,
         n_neg: 0.0,
         tau_pos: 20.0,
@@ -72,8 +68,6 @@ fn main() {
       network.add_synapse(Box::new(synapse), n, m).unwrap();
     }
   }
-
-  let norm = Normal::new(0.0, 1.0);
 
   let mut vinp = vec![0.0; 1000];
   let mut voup = vec![0.0; 1000];
