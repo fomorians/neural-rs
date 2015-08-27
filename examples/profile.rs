@@ -27,7 +27,7 @@ fn main() {
 
   let mut network = Network::new(20);
 
-  let duration = 10000.0;
+  let duration = 1000.0;
   let total_count = 1000;
 
   for _ in 0..total_count {
@@ -52,9 +52,9 @@ fn main() {
   for n in 0..total_count {
     for m in 0..total_count {
       let synapse = STDPSynapse::<ExpTrace>::new(STDPConfig{
-        weight: 30.0,
-        min: -30.0,
-        max: 30.0,
+        weight: 5.0,
+        min: 0.0,
+        max: 10.0,
         n_pos: 0.0,
         n_neg: 0.0,
         tau_pos: 20.0,
@@ -77,7 +77,7 @@ fn main() {
 
   loop {
     for n in 0..total_count {
-      inp[n] = 10.0;
+      inp[n] = 5.0;
       oup[n] = 0.0
     }
 

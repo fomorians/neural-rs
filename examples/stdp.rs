@@ -113,7 +113,7 @@ fn main() {
         delay: delay,
       });
       network.add_synapse(synapse, n, m).unwrap();
-      i = i + 1;
+      i += 1;
     }
   }
 
