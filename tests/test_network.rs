@@ -16,8 +16,8 @@ fn test_network() {
   let mut network = Network::new(20);
 
   let neuron = IzhikevichNeuron::new(1.0, Default::default());
-  let a = network.add_neuron(Box::new(neuron));
-  let b = network.add_neuron(Box::new(neuron));
+  let a = network.add_neuron(neuron);
+  let b = network.add_neuron(neuron);
   assert!(a == 0);
   assert!(b == 1);
 
@@ -26,7 +26,7 @@ fn test_network() {
     max: 180.0,
     ..Default::default()
   });
-  let s = network.add_synapse(Box::new(synapse), a, b).unwrap();
+  let s = network.add_synapse(synapse, a, b).unwrap();
   assert!(s == 0);
 
   {
