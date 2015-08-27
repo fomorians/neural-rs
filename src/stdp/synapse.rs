@@ -21,10 +21,13 @@ pub struct STDPSynapse<T: Trace> {
   delay: usize,
 
   scale: bool,
+
+  sendr_id: usize,
+  recvr_id: usize,
 }
 
 impl<T: Trace> STDPSynapse<T> {
-  pub fn new(config: STDPConfig) -> STDPSynapse<T> {
+  pub fn new(config: STDPConfig, sendr_id: usize, recvr_id: usize) -> STDPSynapse<T> {
     return STDPSynapse{
       pre_trace: T::new(config.tau_pos, config.continuous),
       post_trace: T::new(config.tau_neg, config.continuous),
@@ -37,6 +40,8 @@ impl<T: Trace> STDPSynapse<T> {
       scale: config.scale,
       min: config.min,
       max: config.max,
+      sendr_id: sendr_id,
+      recvr_id: recvr_id,
     }
   }
 
@@ -101,5 +106,13 @@ impl<T: Trace> Synapse for STDPSynapse<T> {
     let delta = self.a_pos() * self.pre_trace.read(now); // decay before using value
     self.integrate(delta);
     delta
+  }
+
+  fn sendr_id(&self) -> usize {
+      self.sendr_id
+  }
+
+  fn recvr_id(&self) -> usize {
+      self.recvr_id
   }
 }

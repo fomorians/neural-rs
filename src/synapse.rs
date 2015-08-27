@@ -4,4 +4,6 @@ pub trait Synapse {
   fn post_recv(&mut self, now: f64) -> f64;
   fn weight(&self) -> f64;
   fn delay(&self) -> usize;
+  fn sendr_id(&self) -> usize;
+  fn recvr_id(&self) -> usize;
 }

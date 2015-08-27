@@ -5,9 +5,10 @@ version = "0.0.1"
 authors = [ "jim@barkingmousestudio.com" ]
 
 [dependencies]
-wheel_timer = "*"
+bit-vec = "*"
 rand = "*"
 vec_map = "*"
+wheel_timer = "*"
 
 [dev-dependencies]
 csv = "*"

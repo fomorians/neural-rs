@@ -17,10 +17,13 @@ pub struct SymSynapse {
 
   pre_time: f64,
   post_time: f64,
+
+  sendr_id: usize,
+  recvr_id: usize,
 }
 
 impl SymSynapse {
-  pub fn new(config: SymConfig) -> SymSynapse {
+  pub fn new(config: SymConfig, sendr_id: usize, recvr_id: usize) -> SymSynapse {
     return SymSynapse{
       weight: config.weight,
       a_sym: config.a_sym,
@@ -31,6 +34,8 @@ impl SymSynapse {
       max: config.max,
       pre_time: 0.0,
       post_time: 0.0,
+      sendr_id: sendr_id,
+      recvr_id: recvr_id,
     }
   }
 
@@ -72,5 +77,13 @@ impl Synapse for SymSynapse {
       let delta = self.get_delta();
       self.integrate(delta);
       delta
+  }
+
+  fn sendr_id(&self) -> usize {
+      self.sendr_id
+  }
+
+  fn recvr_id(&self) -> usize {
+      self.recvr_id
   }
 }

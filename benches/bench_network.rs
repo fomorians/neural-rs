@@ -55,7 +55,7 @@ fn bench_network_tick_all_to_all(bn: &mut Bencher) {
         continuous: false,
         scale: false,
         delay: 1,
-      });
+      }, n, m);
       network.add_synapse(synapse, n, m).unwrap();
     }
   }
@@ -137,7 +137,7 @@ fn bench_network_tick_limited(bn: &mut Bencher) {
         continuous: false,
         scale: false,
         delay: 1,
-      });
+      }, n, m);
       network.add_synapse(synapse, n, m).unwrap();
       i += 1;
     }

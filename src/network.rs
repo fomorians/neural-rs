@@ -1,6 +1,8 @@
-extern crate wheel_timer;
+extern crate bit_vec;
 extern crate vec_map;
+extern crate wheel_timer;
 
+use self::bit_vec::BitVec;
 use self::vec_map::VecMap;
 use self::vec_map::Entry::{Vacant, Occupied};
 
@@ -97,8 +99,10 @@ impl<N: Neuron, S: Synapse> Network<N, S> {
         // let mut pre_recv_count = 0;
         let neuron_count = self.neurons.len();
 
-        // drain delayed neuronal firings
+        let mut spiking_neurons = BitVec::from_elem(self.neurons.len(), false);
+
         for current_tick in 0..ticks {
+            // Drain delayed neuronal firings
             let spikes = self.scheduler.tick();
             for spike in spikes.iter() {
                 if let Some(neuron) = self.neurons.get_mut(&spike.recvr_id) {
@@ -106,8 +110,8 @@ impl<N: Neuron, S: Synapse> Network<N, S> {
                 }
             }
 
-            // update neurons
-            for (sendr_id, neuron) in self.neurons.iter_mut() {
+            // Update neurons
+            for (sendr_id, neuron) in &mut self.neurons {
                 neuron.recv(inputs[current_tick * neuron_count + sendr_id]);
                 neuron.tick(1.0);
 
@@ -116,38 +120,33 @@ impl<N: Neuron, S: Synapse> Network<N, S> {
                     continue;
                 }
 
+                spiking_neurons.set(sendr_id, true);
                 outputs[sendr_id] += v;
                 neuron.reset();
+            }
 
-                // On the incoming (receiving synapses), update them post-receival
-                if let Some(recv_synapses) = self.recv_synapses.get_mut(&sendr_id) {
-                    // println!("recv_synapses: sendr_id: {:?} recv_synapses: {:?}", sendr_id, recv_synapses.len());
-                    for synapse_id in recv_synapses.iter() {
-                        if let Some(synapse) = self.synapses.get_mut(&synapse_id) {
-                            synapse.post_recv(self.now);
-                            // post_recv_count += 1;
-                        }
-                    }
+            for (_, synapse) in &mut self.synapses {
+                // Update synapses, post_recv
+                if spiking_neurons[synapse.sendr_id()] {
+                    // On the incoming (receiving synapses), update them post-receival
+                    synapse.post_recv(self.now);
                 }
 
-                // On the outgoing (sending synapses), update them pre-receival
-                if let Some(send_synapses) = self.send_synapses.get_mut(&sendr_id) {
-                    // println!("send_synapses: sendr_id: {:?} send_synapses: {:?}", sendr_id, send_synapses.len());
-                    for &(recvr_id, synapse_id) in send_synapses.iter() {
-                        if let Some(synapse) = self.synapses.get_mut(&synapse_id) {
-                            synapse.pre_recv(self.now);
-                            // pre_recv_count += 1;
-
-                            let spike = Spike{
-                                recvr_id: recvr_id,
-                                v:        synapse.weight(),
-                            };
-                            self.scheduler.schedule(synapse.delay(), spike);
-                        }
-                    }
+                // Update synapses, pre_recv
+                if spiking_neurons[synapse.recvr_id()] {
+                    // On the outgoing (sending synapses), update them pre-receival
+                    synapse.pre_recv(self.now);
+                    let spike = Spike {
+                        recvr_id: synapse.recvr_id(),
+                        v:        synapse.weight(),
+                    };
+                    // Schedule delayed spikes
+                    self.scheduler.schedule(synapse.delay(), spike);
                 }
             }
 
+            spiking_neurons.clear();
+            // Increment time
             self.now = self.now + 1.0;
         }
 
