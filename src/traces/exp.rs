@@ -10,6 +10,10 @@ pub struct ExpTrace {
   continuous: bool
 }
 
+// fn exp(f64 x) -> f64 {
+//     (6f64 + x * (6f64 + x * (3f64 + x))) * 0.16666666f64;
+// }
+
 impl Trace for ExpTrace {
   fn new(half_life: f64, continuous: bool) -> Self {
     ExpTrace {

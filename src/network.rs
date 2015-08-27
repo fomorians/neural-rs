@@ -87,6 +87,9 @@ impl <'a> Network<'a> {
     }
 
     pub fn tick(&mut self, ticks: usize, inputs: &[f64], outputs: &mut [f64]) -> f64 {
+        // let mut post_recv_count = 0;
+        // let mut pre_recv_count = 0;
+
         // drain delayed neuronal firings
         for _ in 0..ticks {
             let spikes = self.scheduler.tick();
@@ -111,18 +114,22 @@ impl <'a> Network<'a> {
 
                 // On the incoming (receiving synapses), update them post-receival
                 if let Some(recv_synapses) = self.recv_synapses.get_mut(&sendr_id) {
+                    // println!("recv_synapses: sendr_id: {:?} recv_synapses: {:?}", sendr_id, recv_synapses.len());
                     for synapse_id in recv_synapses.iter() {
                         if let Some(synapse) = self.synapses.get_mut(&synapse_id) {
                             synapse.post_recv(self.now);
+                            // post_recv_count += 1;
                         }
                     }
                 }
 
                 // On the outgoing (sending synapses), update them pre-receival
                 if let Some(send_synapses) = self.send_synapses.get_mut(&sendr_id) {
+                    // println!("send_synapses: sendr_id: {:?} send_synapses: {:?}", sendr_id, send_synapses.len());
                     for &(recvr_id, synapse_id) in send_synapses.iter() {
                         if let Some(synapse) = self.synapses.get_mut(&synapse_id) {
                             synapse.pre_recv(self.now);
+                            // pre_recv_count += 1;
 
                             let spike = Spike{
                                 recvr_id: recvr_id,
@@ -136,6 +143,8 @@ impl <'a> Network<'a> {
 
             self.now = self.now + 1.0;
         }
+
+        // println!("post_recv_count: {:?} pre_recv_count: {:?}", post_recv_count, pre_recv_count);
 
         self.now
     }
