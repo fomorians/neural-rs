@@ -44,7 +44,7 @@ fn main() {
     let v = c;
     let u = b * v;
 
-    network.add_neuron(Box::new(IzhikevichNeuron::new(0.5, IzhikevichConfig{
+    network.add_neuron(IzhikevichNeuron::new(0.5, IzhikevichConfig{
       v: v,
       u: u,
       a: a,
@@ -52,7 +52,7 @@ fn main() {
       c: c,
       d: d,
       ..Default::default()
-    })));
+    }));
   }
 
   for _ in 0..inhibitory_count {
@@ -63,7 +63,7 @@ fn main() {
     let v = c;
     let u = b * v;
 
-    network.add_neuron(Box::new(IzhikevichNeuron::new(0.5, IzhikevichConfig{
+    network.add_neuron(IzhikevichNeuron::new(0.5, IzhikevichConfig{
       v: v,
       u: u,
       a: a,
@@ -71,7 +71,7 @@ fn main() {
       c: c,
       d: d,
       ..Default::default()
-    })));
+    }));
   }
 
   let connectivity = 100;
@@ -112,7 +112,7 @@ fn main() {
         scale: false,
         delay: delay,
       });
-      network.add_synapse(Box::new(synapse), n, m).unwrap();
+      network.add_synapse(synapse, n, m).unwrap();
       i = i + 1;
     }
   }

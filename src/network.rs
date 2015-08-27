@@ -13,9 +13,9 @@ pub enum NeuralError {
     MissingNeuron = 0,
 }
 
-pub struct Network<'a> {
-    neurons: VecMap<Box<Neuron + 'a>>,
-    synapses: VecMap<Box<Synapse + 'a>>,
+pub struct Network<N: Neuron, S: Synapse> {
+    neurons: VecMap<N>,
+    synapses: VecMap<S>,
 
     send_synapses: VecMap<Vec<(usize, usize)>>,
     recv_synapses: VecMap<Vec<usize>>,
@@ -28,9 +28,9 @@ pub struct Network<'a> {
     now: f64,
 }
 
-impl <'a> Network<'a> {
-    pub fn new(max_delay: usize) -> Network<'a> {
-        return Network{
+impl<N: Neuron, S: Synapse> Network<N, S> {
+    pub fn new(max_delay: usize) -> Network<N, S> {
+        return Network {
             neurons: VecMap::new(),
             synapses: VecMap::new(),
             send_synapses: VecMap::new(),
@@ -50,7 +50,7 @@ impl <'a> Network<'a> {
         self.synapses.len()
     }
 
-    pub fn add_neuron(&mut self, neuron: Box<Neuron + 'a>) -> usize {
+    pub fn add_neuron(&mut self, neuron: N) -> usize {
         let neuron_id = self.next_neuron_id;
         self.next_neuron_id = neuron_id + 1;
 
@@ -58,7 +58,7 @@ impl <'a> Network<'a> {
         neuron_id
     }
 
-    pub fn add_synapse(&mut self, synapse: Box<Synapse + 'a>, sendr_id: usize, recvr_id: usize) -> Result<usize, NeuralError> {
+    pub fn add_synapse(&mut self, synapse: S, sendr_id: usize, recvr_id: usize) -> Result<usize, NeuralError> {
         if !self.neurons.contains_key(&sendr_id) || !self.neurons.contains_key(&recvr_id) {
             return Err(NeuralError::MissingNeuron)
         }

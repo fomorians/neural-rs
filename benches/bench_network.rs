@@ -34,7 +34,7 @@ fn bench_network_tick(bn: &mut Bencher) {
     let v = -65.0;
     let u = b * v;
 
-    network.add_neuron(Box::new(IzhikevichNeuron::new(0.5, IzhikevichConfig{
+    network.add_neuron(IzhikevichNeuron::new(0.5, IzhikevichConfig{
       v: v,
       u: u,
       a: a,
@@ -42,7 +42,7 @@ fn bench_network_tick(bn: &mut Bencher) {
       c: c,
       d: d,
       ..Default::default()
-    })));
+    }));
   }
 
   for _ in 0..inhibitory_count {
@@ -54,7 +54,7 @@ fn bench_network_tick(bn: &mut Bencher) {
     let v = -65.0;
     let u = b * v;
 
-    network.add_neuron(Box::new(IzhikevichNeuron::new(0.5, IzhikevichConfig{
+    network.add_neuron(IzhikevichNeuron::new(0.5, IzhikevichConfig{
       v: v,
       u: u,
       a: a,
@@ -62,7 +62,7 @@ fn bench_network_tick(bn: &mut Bencher) {
       c: c,
       d: d,
       ..Default::default()
-    })));
+    }));
   }
 
   for n in 0..total_count {
@@ -87,7 +87,7 @@ fn bench_network_tick(bn: &mut Bencher) {
         scale: false,
         delay: 1,
       });
-      network.add_synapse(Box::new(synapse), n, m).unwrap();
+      network.add_synapse(synapse, n, m).unwrap();
     }
   }
 
