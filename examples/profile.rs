@@ -28,7 +28,7 @@ fn main() {
   let mut network = Network::new(20);
 
   let duration = 10000.0;
-  let total_count = 100;
+  let total_count = 1000;
 
   for _ in 0..total_count {
     let a = 0.02;
@@ -77,7 +77,7 @@ fn main() {
 
   loop {
     for n in 0..total_count {
-      inp[n] = 5.0;
+      inp[n] = 10.0;
       oup[n] = 0.0
     }
 
