@@ -86,6 +86,10 @@ impl<N: Neuron, S: Synapse> Network<N, S> {
         Ok(synapse_id)
     }
 
+    pub fn dump_weights(&self) -> Vec<f64> {
+        self.synapses.iter().map(|(_, s)| s.weight()).collect()
+    }
+
     pub fn tick(&mut self, ticks: usize, inputs: &[f64], outputs: &mut [f64]) -> f64 {
         // let mut post_recv_count = 0;
         // let mut pre_recv_count = 0;
