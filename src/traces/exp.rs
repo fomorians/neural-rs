@@ -1,4 +1,5 @@
 use trace::Trace;
+use fastexp::fastexp;
 
 // More accurate and matches references but slower due to exp.
 
@@ -9,10 +10,6 @@ pub struct ExpTrace {
   half_life: f64,
   continuous: bool
 }
-
-// fn exp(f64 x) -> f64 {
-//     (6f64 + x * (6f64 + x * (3f64 + x))) * 0.16666666f64;
-// }
 
 impl Trace for ExpTrace {
   fn new(half_life: f64, continuous: bool) -> Self {
@@ -28,7 +25,7 @@ impl Trace for ExpTrace {
     if self.last_time != 0.0 {
       // half-life decay
       let diff = now - self.last_time;
-      self.value *= (-1.0 * diff / self.half_life).exp();
+      self.value *= fastexp(-1.0 * diff / self.half_life);
     }
 
     self.last_time = now;

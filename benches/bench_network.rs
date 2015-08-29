@@ -93,7 +93,7 @@ fn bench_network_tick_limited(bn: &mut Bencher) {
   let mut network = Network::new(20);
 
   let total_count = 100;
-  let connectivity = 10;
+  let connectivity = 50;
 
   for _ in 0..total_count {
     let a = 0.02;
