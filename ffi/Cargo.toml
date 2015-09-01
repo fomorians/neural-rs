@@ -1,0 +1,12 @@
+[package]
+name = "neural-ffi"
+version = "0.1.0"
+authors = ["Jim Fleming <jimmy.fleming@gmail.com>"]
+
+[dependencies.neural]
+
+path = ".."
+
+[lib]
+name = "neural"
+crate-type = ["dylib"]
