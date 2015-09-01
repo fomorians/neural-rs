@@ -95,9 +95,10 @@ impl<N: Neuron, S: Synapse> Network<N, S> {
     pub fn tick(&mut self, ticks: usize, inputs: &[f64], outputs: &mut [f64]) -> f64 {
         // let mut post_recv_count = 0;
         // let mut pre_recv_count = 0;
+        let neuron_count = self.neurons.len();
 
         // drain delayed neuronal firings
-        for _ in 0..ticks {
+        for current_tick in 0..ticks {
             let spikes = self.scheduler.tick();
             for spike in spikes.iter() {
                 if let Some(neuron) = self.neurons.get_mut(&spike.recvr_id) {
@@ -107,7 +108,7 @@ impl<N: Neuron, S: Synapse> Network<N, S> {
 
             // update neurons
             for (sendr_id, neuron) in self.neurons.iter_mut() {
-                neuron.recv(inputs[sendr_id]);
+                neuron.recv(inputs[current_tick * neuron_count + sendr_id]);
                 neuron.tick(1.0);
 
                 let v = neuron.threshold();
