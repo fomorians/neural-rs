@@ -61,8 +61,12 @@ pub extern fn AddSynapse(network: *mut SymNetwork, sendr_id: usize, recvr_id: us
 pub extern fn TickNetwork(network: *mut SymNetwork, ticks: usize, inputs_ptr: *const f64, outputs_ptr: *mut f64) -> f64 {
   let mut _network = unsafe { &mut *network };
 
-  let inputs = unsafe { std::slice::from_raw_parts(inputs_ptr, _network.get_neuron_count() * ticks) };
-  let mut outputs = unsafe { std::slice::from_raw_parts_mut(outputs_ptr, _network.get_neuron_count()) };
+  let neuron_count = _network.get_neuron_count();
+  let input_slice_size = neuron_count * ticks;
+  let output_slice_size = neuron_count;
+
+  let inputs = unsafe { std::slice::from_raw_parts(inputs_ptr, input_slice_size) };
+  let mut outputs = unsafe { std::slice::from_raw_parts_mut(outputs_ptr, output_slice_size) };
 
   let now = _network.tick(ticks, inputs, outputs);
   now
