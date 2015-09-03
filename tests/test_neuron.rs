@@ -60,8 +60,26 @@ fn test_neuron_default_neuron() {
     name: "default",
     config: Default::default(),
     timespan: 100.0,
-    tau: 1.0,
+    tau: 0.5,
     spikes: 9,
+    input: &|t| {
+      if t > 10.0 {
+        15.0
+      } else {
+        0.0
+      }
+    }
+  });
+}
+
+#[test]
+fn test_neuron_fast_spiking() {
+  run(Test{
+    name: "default",
+    config: IzhikevichConfig::fast_spiking(),
+    timespan: 100.0,
+    tau: 0.5,
+    spikes: 14,
     input: &|t| {
       if t > 10.0 {
         15.0
