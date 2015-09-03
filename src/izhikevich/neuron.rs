@@ -74,42 +74,40 @@ impl IzhikevichNeuron {
 }
 
 impl Neuron for IzhikevichNeuron {
-  fn recv(&mut self, v: f64) -> f64 {
-    self.i += v;
-    self.i
-  }
-
-  fn threshold(&mut self) -> f64 {
-    // We reset `i` here to allow multiple neuron ticks,
-    // per network tick, to make use of its value.
-    self.i = 0.0;
-
-    if self.v >= V_PEAK {
-      V_PEAK
-    } else {
-      0.0
+    fn recv(&mut self, v: f64) -> f64 {
+        self.i += v;
+        self.i
     }
-  }
 
-  fn reset(&mut self) {
-    self.v = self.c;
-    self.u += self.d;
-  }
-
-  fn tick(&mut self, tau: f64) {
-    // The potential updates according to the input and the
-    // passage of time including the variable recovery factor
-    // The recovery factor is updated according to the current
-    // potential and itself
-    let tau_count = (tau / self.tau) as usize;
-    for _ in 0..tau_count {
-      self.v += self.tau * (0.04 * (self.v * self.v) + self.e * self.v + self.f - self.u + self.i);
-
-      self.u += if self.is_accomodation {
-        self.tau * self.a * (self.b * (self.v + 65.0))
-      } else {
-        self.tau * self.a * (self.b * self.v - self.u)
-      };
+    fn threshold(&mut self) -> f64 {
+        if self.v >= V_PEAK {
+            V_PEAK
+        } else {
+            0.0
+        }
     }
-  }
+
+    fn reset(&mut self) {
+        self.v = self.c;
+        self.u += self.d;
+    }
+
+    fn tick(&mut self, tau: f64) {
+        let tau_count = (tau / self.tau) as usize;
+        for _ in 0..tau_count {
+            // The potential updates according to the input and the
+            // passage of time including the variable recovery factor
+            self.v += self.tau * (0.04 * (self.v * self.v) + self.e * self.v + self.f - self.u + self.i);
+
+            // The recovery factor is updated according to the current
+            // potential and itself.
+            self.u += if self.is_accomodation {
+                self.tau * self.a * (self.b * (self.v + 65.0))
+            } else {
+                self.tau * self.a * (self.b * self.v - self.u)
+            };
+        }
+
+        self.i = 0.0;
+    }
 }

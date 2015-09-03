@@ -8,7 +8,7 @@ extern crate rand;
 use test::Bencher;
 
 use std::default::Default;
-use rand::Rng;
+use rand::{Rng, SeedableRng, StdRng};
 
 use neural::Network;
 use neural::izhikevich::{IzhikevichNeuron, IzhikevichConfig};
@@ -89,7 +89,8 @@ fn bench_network_tick_all_to_all(bn: &mut Bencher) {
 
 #[bench]
 fn bench_network_tick_limited(bn: &mut Bencher) {
-  let mut rng = rand::thread_rng();
+  let seed: &[_] = &[1, 2, 3, 4];
+  let mut rng: StdRng = SeedableRng::from_seed(seed);
   let mut network = Network::new(20);
 
   let total_count = 100;

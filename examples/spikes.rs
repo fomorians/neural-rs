@@ -7,7 +7,7 @@ extern crate csv;
 use std::default::Default;
 use std::path::Path;
 use std::fs;
-use rand::Rng;
+use rand::{Rng, SeedableRng, StdRng};
 use rand::distributions::{Normal, IndependentSample};
 
 use neural::Network;
@@ -28,7 +28,8 @@ fn main() {
   let mut writer_rate = csv::Writer::from_file(filepath_rate.as_path()).unwrap();
   writer_rate.encode(("t", "rate")).ok();
 
-  let mut rng = rand::thread_rng();
+  let seed: &[_] = &[1, 2, 3, 4];
+  let mut rng: StdRng = SeedableRng::from_seed(seed);
   let mut network = Network::new(20);
 
   let duration = 1000.0;
