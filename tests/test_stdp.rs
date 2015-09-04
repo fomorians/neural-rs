@@ -13,7 +13,7 @@ use neural::stdp::STDPSynapse;
 use neural::traces::ExpTrace;
 
 #[test]
-fn test_synapse_ltp() {
+fn test_stdp_ltp() {
   let path = Path::new(&std::env::current_dir().unwrap())
     .join("tests/results/");
   fs::create_dir_all(&path).ok();
@@ -44,7 +44,7 @@ fn test_synapse_ltp() {
 }
 
 #[test]
-fn test_synapse_ltd() {
+fn test_stdp_ltd() {
   let path = Path::new(&std::env::current_dir().unwrap())
     .join("tests/results/");
   fs::create_dir_all(&path).ok();
