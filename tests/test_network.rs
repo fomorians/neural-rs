@@ -6,6 +6,7 @@ extern crate rand;
 
 use std::default::Default;
 
+use neural::Float;
 use neural::Network;
 use neural::izhikevich::IzhikevichNeuron;
 use neural::stdp::{STDPSynapse, STDPConfig};
@@ -30,8 +31,8 @@ fn test_network() {
   assert!(s == 0);
 
   {
-    let mut inp: [f64; 2] = [1000.0, 0.0];
-    let mut oup: [f64; 2] = [0.0, 0.0];
+    let mut inp: [Float; 2] = [1000.0, 0.0];
+    let mut oup: [Float; 2] = [0.0, 0.0];
     let now = network.tick(1, &mut inp, &mut oup);
     assert_eq!(now, 1.0);
     assert_eq!(oup[0], 30.0);
@@ -39,8 +40,8 @@ fn test_network() {
   }
 
   {
-    let mut inp: [f64; 2] = [0.0, 0.0];
-    let mut oup: [f64; 2] = [0.0, 0.0];
+    let mut inp: [Float; 2] = [0.0, 0.0];
+    let mut oup: [Float; 2] = [0.0, 0.0];
     let now = network.tick(1, &mut inp, &mut oup);
     assert_eq!(now, 2.0);
     assert_eq!(oup[0], 0.0);
@@ -48,8 +49,8 @@ fn test_network() {
   }
 
   {
-    let mut inp: [f64; 2] = [0.0, 0.0];
-    let mut oup: [f64; 2] = [0.0, 0.0];
+    let mut inp: [Float; 2] = [0.0, 0.0];
+    let mut oup: [Float; 2] = [0.0, 0.0];
     let now = network.tick(1, &mut inp, &mut oup);
     assert_eq!(now, 3.0);
     assert_eq!(oup[0], 0.0);
@@ -57,8 +58,8 @@ fn test_network() {
   }
 
   {
-    let mut inp: [f64; 2] = [0.0, 0.0];
-    let mut oup: [f64; 2] = [0.0, 0.0];
+    let mut inp: [Float; 2] = [0.0, 0.0];
+    let mut oup: [Float; 2] = [0.0, 0.0];
     let now = network.tick(1, &mut inp, &mut oup);
     assert_eq!(now, 4.0);
     assert_eq!(oup[0], 0.0);

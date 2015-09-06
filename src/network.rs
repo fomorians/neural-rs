@@ -4,6 +4,8 @@ extern crate vec_map;
 use self::vec_map::VecMap;
 use self::vec_map::Entry::{Vacant, Occupied};
 
+use Float;
+
 use neuron::Neuron;
 use synapse::Synapse;
 use spike::Spike;
@@ -25,7 +27,7 @@ pub struct Network<N: Neuron, S: Synapse> {
     next_neuron_id: usize,
     next_synapse_id: usize,
 
-    now: f64,
+    now: Float,
 }
 
 impl<N: Neuron, S: Synapse> Network<N, S> {
@@ -86,13 +88,13 @@ impl<N: Neuron, S: Synapse> Network<N, S> {
         Ok(synapse_id)
     }
 
-    pub fn dump_weights(&self, weights: &mut [f64]) {
+    pub fn dump_weights(&self, weights: &mut [Float]) {
         for (i, s) in self.synapses.iter() {
             weights[i] = s.weight();
         }
     }
 
-    pub fn tick(&mut self, ticks: usize, inputs: &[f64], outputs: &mut [f64]) -> f64 {
+    pub fn tick(&mut self, ticks: usize, inputs: &[Float], outputs: &mut [Float]) -> Float {
         // let mut post_recv_count = 0;
         // let mut pre_recv_count = 0;
         let neuron_count = self.neurons.len();

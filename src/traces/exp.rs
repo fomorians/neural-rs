@@ -1,21 +1,18 @@
+use Float;
 use trace::Trace;
 
 // More accurate and matches references but slower due to exp.
 
 #[derive(Debug, Clone, Copy)]
 pub struct ExpTrace {
-  value: f64,
-  last_time: f64,
-  half_life: f64,
+  value: Float,
+  last_time: Float,
+  half_life: Float,
   continuous: bool
 }
 
-// fn exp(f64 x) -> f64 {
-//     (6f64 + x * (6f64 + x * (3f64 + x))) * 0.16666666f64;
-// }
-
 impl Trace for ExpTrace {
-  fn new(half_life: f64, continuous: bool) -> Self {
+  fn new(half_life: Float, continuous: bool) -> Self {
     ExpTrace {
       continuous: continuous,
       half_life: half_life,
@@ -24,7 +21,7 @@ impl Trace for ExpTrace {
     }
   }
 
-  fn read(&mut self, now: f64) -> f64 {
+  fn read(&mut self, now: Float) -> Float {
     if self.last_time != 0.0 {
       // half-life decay
       let diff = now - self.last_time;
@@ -35,7 +32,7 @@ impl Trace for ExpTrace {
     self.value
   }
 
-  fn update(&mut self, val: f64, now: f64) {
+  fn update(&mut self, val: Float, now: Float) {
     // Adding to `value` produces a temporal all-to-all interaction
     // vs. reseting `value` which restricts interactions to
     // nearest-neighbor.

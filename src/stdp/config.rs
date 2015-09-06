@@ -1,19 +1,20 @@
+use Float;
 use std::default::Default;
 
 #[derive(Debug, Clone, Copy)]
 #[repr(C)]
 pub struct STDPConfig {
-  pub weight: f64,
-  pub min: f64,
-  pub max: f64,
-  pub n_pos: f64,
-  pub n_neg: f64,
+  pub weight: Float,
+  pub min: Float,
+  pub max: Float,
+  pub n_pos: Float,
+  pub n_neg: Float,
 
   // trace config
-  pub tau_pos: f64,
-  pub tau_neg: f64,
-  pub a_pos: f64,
-  pub a_neg: f64,
+  pub tau_pos: Float,
+  pub tau_neg: Float,
+  pub a_pos: Float,
+  pub a_neg: Float,
 
   // all-to-all vs. nearest-neighbor interactions
   pub continuous: bool,

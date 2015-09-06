@@ -3,13 +3,14 @@
 extern crate test;
 extern crate neural;
 
+use neural::Float;
 use neural::trace::Trace;
 use neural::traces::{LinTrace, ExpTrace};
 
 #[test]
 fn test_lin_trace_nearest_neighbor() {
   let mut trace = LinTrace::new(1.0, false);
-  let mut val: f64;
+  let mut val: Float;
 
   trace.update(1.0, 1.0);
 
@@ -30,7 +31,7 @@ fn test_lin_trace_nearest_neighbor() {
 #[test]
 fn test_lin_trace_all_to_all() {
   let mut trace = LinTrace::new(1.0, true);
-  let mut val: f64;
+  let mut val: Float;
 
   trace.update(1.0, 1.0);
 
@@ -51,7 +52,7 @@ fn test_lin_trace_all_to_all() {
 #[test]
 fn test_exp_trace_nearest_neighbor() {
   let mut trace = ExpTrace::new(1.0, false);
-  let mut val: f64;
+  let mut val: Float;
 
   trace.update(1.0, 1.0);
 
@@ -72,7 +73,7 @@ fn test_exp_trace_nearest_neighbor() {
 #[test]
 fn test_exp_trace_all_to_all() {
   let mut trace = ExpTrace::new(1.0, true);
-  let mut val: f64;
+  let mut val: Float;
 
   trace.update(1.0, 1.0);
 
