@@ -5,6 +5,8 @@ pub use self::neuron::Neuron;
 pub use self::synapse::Synapse;
 pub use self::trace::Trace;
 
+pub mod fastexp;
+
 pub mod network;
 pub mod neuron;
 pub mod synapse;
