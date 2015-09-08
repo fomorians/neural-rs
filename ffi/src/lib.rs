@@ -7,6 +7,7 @@ use std::mem::transmute;
 use neural::Network;
 use neural::izhikevich::{IzhikevichNeuron, IzhikevichConfig};
 use neural::sym::{SymSynapse, SymConfig};
+use neural::Float;
 
 pub type SymNetwork = Network<IzhikevichNeuron, SymSynapse>;
 
@@ -35,7 +36,7 @@ pub extern fn GetSynapseCount(network: *mut SymNetwork) -> usize {
 }
 
 #[no_mangle]
-pub extern fn DumpWeights(network: *mut SymNetwork, weights_ptr: *mut f64) {
+pub extern fn DumpWeights(network: *mut SymNetwork, weights_ptr: *mut Float) {
   let mut _network = unsafe { &mut *network };
   let mut weights = unsafe { std::slice::from_raw_parts_mut(weights_ptr, _network.get_synapse_count()) };
   _network.dump_weights(weights);
@@ -58,7 +59,7 @@ pub extern fn AddSynapse(network: *mut SymNetwork, sendr_id: usize, recvr_id: us
 }
 
 #[no_mangle]
-pub extern fn TickNetwork(network: *mut SymNetwork, ticks: usize, inputs_ptr: *const f64, outputs_ptr: *mut f64) -> f64 {
+pub extern fn TickNetwork(network: *mut SymNetwork, ticks: usize, inputs_ptr: *const Float, outputs_ptr: *mut Float) -> Float {
   let mut _network = unsafe { &mut *network };
 
   let neuron_count = _network.get_neuron_count();

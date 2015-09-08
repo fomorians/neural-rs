@@ -8,21 +8,22 @@ use std::default::Default;
 use std::path::Path;
 use std::fs;
 
+use neural::Float;
 use neural::Neuron;
 use neural::izhikevich::{IzhikevichNeuron, IzhikevichConfig};
 
 struct Test<'a> {
   name: &'static str,
-  timespan: f64,
-  tau: f64,
+  timespan: Float,
+  tau: Float,
   config: IzhikevichConfig,
-  input: &'a (Fn(f64) -> f64 + 'a),
+  input: &'a (Fn(Float) -> Float + 'a),
   spikes: u64,
 }
 
 fn run(t: Test) {
   let mut neuron = IzhikevichNeuron::new(t.tau, t.config);
-  let mut now = 0f64;
+  let mut now = 0.0;
   let mut spikes = 0;
 
   let path = Path::new(&std::env::current_dir().unwrap())

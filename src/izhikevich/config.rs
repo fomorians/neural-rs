@@ -1,16 +1,17 @@
+use Float;
 use std::default::Default;
 
 #[derive(Debug, Clone, Copy)]
 #[repr(C)]
 pub struct IzhikevichConfig {
-  pub v: f64,
-  pub u: f64,
-  pub a: f64,
-  pub b: f64,
-  pub c: f64,
-  pub d: f64,
-  pub e: f64,
-  pub f: f64,
+  pub v: Float,
+  pub u: Float,
+  pub a: Float,
+  pub b: Float,
+  pub c: Float,
+  pub d: Float,
+  pub e: Float,
+  pub f: Float,
   pub is_accomodation: bool,
 }
 

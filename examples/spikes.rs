@@ -10,6 +10,7 @@ use std::fs;
 use rand::{Rng, SeedableRng, StdRng};
 use rand::distributions::{Normal, IndependentSample};
 
+use neural::Float;
 use neural::Network;
 use neural::izhikevich::{IzhikevichNeuron, IzhikevichConfig};
 use neural::stdp::{STDPSynapse, STDPConfig};
@@ -39,7 +40,7 @@ fn main() {
   let total_count = excitatory_count + inhibitory_count;
 
   for _ in 0..excitatory_count {
-    let r = rng.gen::<f64>();
+    let r = rng.gen::<Float>();
     let a = 0.02;
     let b = 0.2;
     let c = -65.0 + (15.0 * r.powi(2));
@@ -59,7 +60,7 @@ fn main() {
   }
 
   for _ in 0..inhibitory_count {
-    let r = rng.gen::<f64>();
+    let r = rng.gen::<Float>();
     let a = 0.02 + (0.08 * r);
     let b = 0.25 - (0.05 * r);
     let c = -65.0;
@@ -81,9 +82,9 @@ fn main() {
   for n in 0..total_count {
     for m in 0..total_count {
       let weight = if n < excitatory_count { // excitatory
-        0.5 * rng.gen::<f64>()
+        0.5 * rng.gen::<Float>()
       } else { // inhibitory
-        -1.0 * rng.gen::<f64>()
+        -1.0 * rng.gen::<Float>()
       };
 
       let synapse = STDPSynapse::<ExpTrace>::new(STDPConfig{
@@ -106,7 +107,7 @@ fn main() {
 
   let norm = Normal::new(0.0, 1.0);
 
-  let mut vinp = vec![0.0; 1000];
+  let mut vinp: Vec<Float> = vec![0.0; 1000];
   let mut voup = vec![0.0; 1000];
 
   let inp = vinp.as_mut_slice();
@@ -121,7 +122,7 @@ fn main() {
         2.0 * norm.ind_sample(&mut rng)
       };
 
-      inp[n] = i;
+      inp[n] = i as Float;
       oup[n] = 0.0
     }
 
