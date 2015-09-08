@@ -1,17 +1,17 @@
+use Float;
 use trace::Trace;
 
 // Fast approximation of exp trace.
-
 #[derive(Debug, Clone, Copy)]
 pub struct LinTrace {
-  value: f64,
-  last_time: f64,
-  half_life: f64,
+  value: Float,
+  last_time: Float,
+  half_life: Float,
   continuous: bool
 }
 
 impl Trace for LinTrace {
-  fn new(half_life: f64, continuous: bool) -> Self {
+  fn new(half_life: Float, continuous: bool) -> Self {
     LinTrace {
       continuous: continuous,
       half_life: half_life,
@@ -20,7 +20,7 @@ impl Trace for LinTrace {
     }
   }
 
-  fn read(&mut self, now: f64) -> f64 {
+  fn read(&mut self, now: Float) -> Float {
     if self.last_time != 0.0 {
       // half-life decay
       let diff = now - self.last_time;
@@ -35,7 +35,7 @@ impl Trace for LinTrace {
     self.value
   }
 
-  fn update(&mut self, val: f64, now: f64) {
+  fn update(&mut self, val: Float, now: Float) {
     // Adding to `value` produces a temporal all-to-all interaction
     // vs. reseting `value` which restricts interactions to
     // nearest-neighbor.

@@ -1,22 +1,23 @@
+use Float;
 use synapse::Synapse;
 use trace::Trace;
 use stdp::config::STDPConfig;
 
 #[derive(Debug, Clone, Copy)]
 pub struct STDPSynapse<T: Trace> {
-  weight: f64,
+  weight: Float,
 
-  min: f64,
-  max: f64,
+  min: Float,
+  max: Float,
 
-  n_pos: f64,
-  n_neg: f64,
+  n_pos: Float,
+  n_neg: Float,
 
   pre_trace: T,
   post_trace: T,
 
-  a_pos: f64,
-  a_neg: f64,
+  a_pos: Float,
+  a_neg: Float,
 
   delay: usize,
 
@@ -40,7 +41,7 @@ impl<T: Trace> STDPSynapse<T> {
     }
   }
 
-  fn a_pos(&self) -> f64 {
+  fn a_pos(&self) -> Float {
     if self.scale {
       self.n_pos * (self.max - self.weight)
     } else {
@@ -48,7 +49,7 @@ impl<T: Trace> STDPSynapse<T> {
     }
   }
 
-  fn a_neg(&self) -> f64 {
+  fn a_neg(&self) -> Float {
     if self.scale {
       self.n_neg * (self.min - self.weight)
     } else {
@@ -56,7 +57,7 @@ impl<T: Trace> STDPSynapse<T> {
     }
   }
 
-  fn integrate(&mut self, delta: f64) {
+  fn integrate(&mut self, delta: Float) {
     self.weight = self.weight + delta;
     if self.weight > self.max {
       self.weight = self.max;
@@ -67,7 +68,7 @@ impl<T: Trace> STDPSynapse<T> {
 }
 
 impl<T: Trace> Synapse for STDPSynapse<T> {
-  fn weight(&self) -> f64 {
+  fn weight(&self) -> Float {
     self.weight
   }
 
@@ -75,7 +76,7 @@ impl<T: Trace> Synapse for STDPSynapse<T> {
     self.delay
   }
 
-  fn pre_recv(&mut self, now: f64) -> f64 { // delta
+  fn pre_recv(&mut self, now: Float) -> Float { // delta
     // Pre-synaptic spike leaves a trace which increases
     // by an amount a+(x) at the moment of spike arrival and decays
     // exponentially in the absence of spikes
@@ -89,7 +90,7 @@ impl<T: Trace> Synapse for STDPSynapse<T> {
     delta
   }
 
-  fn post_recv(&mut self, now: f64) -> f64 { // delta
+  fn post_recv(&mut self, now: Float) -> Float { // delta
     // Post-synaptic spike leaves a trace y(t) which increases
     // by an amount a-(y) at the moment of spike arrival and decays
     // exponentially in the absence of spikes.

@@ -1,15 +1,16 @@
+use Float;
 use std::default::Default;
 
 #[derive(Debug, Clone, Copy)]
 #[repr(C)]
 pub struct SymConfig {
-  pub weight: f64,
-  pub a_sym: f64,
-  pub tau_a: f64,
-  pub tau_b: f64,
+  pub weight: Float,
+  pub a_sym: Float,
+  pub tau_a: Float,
+  pub tau_b: Float,
   pub delay: usize,
-  pub min: f64,
-  pub max: f64,
+  pub min: Float,
+  pub max: Float,
 }
 
 impl Default for SymConfig {

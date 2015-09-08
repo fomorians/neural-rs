@@ -1,23 +1,24 @@
+use Float;
 use synapse::Synapse;
 use sym::config::SymConfig;
-use fastexp::fastexp;
+use fastexp::FastExp;
 
 #[derive(Debug, Clone, Copy)]
 pub struct SymSynapse {
-  weight: f64,
+  weight: Float,
 
-  min: f64,
-  max: f64,
+  min: Float,
+  max: Float,
 
-  a_sym: f64,
+  a_sym: Float,
 
-  tau_a: f64,
-  tau_b: f64,
+  tau_a: Float,
+  tau_b: Float,
 
   delay: usize,
 
-  pre_time: f64,
-  post_time: f64,
+  pre_time: Float,
+  post_time: Float,
 }
 
 impl SymSynapse {
@@ -35,12 +36,12 @@ impl SymSynapse {
     }
   }
 
-  fn get_delta(&self) -> f64 {
+  fn get_delta(&self) -> Float {
     let dt = self.post_time - self.pre_time;
-    self.a_sym * (1.0 - (dt / self.tau_a).powi(2)) * fastexp(-dt.abs() / self.tau_b)
+    self.a_sym * (1.0 - (dt / self.tau_a).powi(2)) * (-dt.abs() / self.tau_b).fastexp()
   }
 
-  fn integrate(&mut self, delta: f64) {
+  fn integrate(&mut self, delta: Float) {
     self.weight = self.weight + delta;
     if self.weight > self.max {
       self.weight = self.max;
@@ -51,7 +52,7 @@ impl SymSynapse {
 }
 
 impl Synapse for SymSynapse {
-  fn weight(&self) -> f64 {
+  fn weight(&self) -> Float {
     self.weight
   }
 
@@ -59,7 +60,7 @@ impl Synapse for SymSynapse {
     self.delay
   }
 
-  fn pre_recv(&mut self, now: f64) -> f64 { // delta
+  fn pre_recv(&mut self, now: Float) -> Float { // delta
       self.pre_time = now;
 
       let delta = self.get_delta();
@@ -67,7 +68,7 @@ impl Synapse for SymSynapse {
       delta
   }
 
-  fn post_recv(&mut self, now: f64) -> f64 { // delta
+  fn post_recv(&mut self, now: Float) -> Float { // delta
       self.post_time = now;
 
       let delta = self.get_delta();

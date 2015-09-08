@@ -1,52 +1,53 @@
+use Float;
 use std::default::Default;
 
 use neuron::Neuron;
 use izhikevich::config::IzhikevichConfig;
 
-const V_PEAK: f64 = 30.0;
+const V_PEAK: Float = 30.0;
 
 #[derive(Debug, Clone, Copy)]
 pub struct IzhikevichNeuron {
   // Membrane potential
-  pub v: f64,
+  pub v: Float,
 
   // Membrane recovery
-  pub u: f64,
+  pub u: Float,
 
   // Describes accumulated membrane potential before updating.
-  i: f64,
+  i: Float,
 
   // Describes the time scale of the recovery variable `u`.
   // Smaller values result in slower recovery.
   // A typical value is `a = 0.02`.
-  a: f64,
+  a: Float,
 
   // Describes the sensitivity of the recovery variable `u`
   // to the subthreshold fluctuations of the membrane potential `v`.
   // Greater values couple `v` and more strongly resulting in possible
   // subthreshold oscillations and low-threshold spiking dynamics.
   // A typical value is `b = 0.2`.
-  b: f64,
+  b: Float,
 
 
   // Describes the after-spike reset value of the membrane potential `v`
   // caused by the fast high-threshold K+ conductances.
   // A typical value is `c = -65mV`.
-  c: f64,
+  c: Float,
 
   // Describes the after-spike reset of the recovery variable `u` caused
   // by slow high-threshold Na+ and K+ conductances.
   // A typical value is `d = 2`.
-  d: f64,
+  d: Float,
 
-  e: f64,
+  e: Float,
 
-  f: f64,
+  f: Float,
 
   // Special casing for accomodation model...
   is_accomodation: bool,
 
-  tau: f64,
+  tau: Float,
 }
 
 impl Default for IzhikevichNeuron {
@@ -56,7 +57,7 @@ impl Default for IzhikevichNeuron {
 }
 
 impl IzhikevichNeuron {
-  pub fn new(tau: f64, config: IzhikevichConfig) -> IzhikevichNeuron {
+  pub fn new(tau: Float, config: IzhikevichConfig) -> IzhikevichNeuron {
     IzhikevichNeuron{
       v: config.v,
       u: config.u,
@@ -74,12 +75,12 @@ impl IzhikevichNeuron {
 }
 
 impl Neuron for IzhikevichNeuron {
-    fn recv(&mut self, v: f64) -> f64 {
+    fn recv(&mut self, v: Float) -> Float {
         self.i += v;
         self.i
     }
 
-    fn threshold(&mut self) -> f64 {
+    fn threshold(&mut self) -> Float {
         if self.v >= V_PEAK {
             V_PEAK
         } else {
@@ -92,7 +93,7 @@ impl Neuron for IzhikevichNeuron {
         self.u += self.d;
     }
 
-    fn tick(&mut self, tau: f64) {
+    fn tick(&mut self, tau: Float) {
         let tau_count = (tau / self.tau) as usize;
         for _ in 0..tau_count {
             // The potential updates according to the input and the
