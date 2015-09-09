@@ -27,6 +27,9 @@ pub struct Network<N: Neuron, S: Synapse> {
     next_neuron_id: usize,
     next_synapse_id: usize,
 
+    transmission_enabled: bool,
+    learning_enabled: bool,
+
     now: Float,
 }
 
@@ -40,6 +43,8 @@ impl<N: Neuron, S: Synapse> Network<N, S> {
             scheduler: wheel_timer::WheelTimer::new(max_delay),
             next_neuron_id: 0,
             next_synapse_id: 0,
+            transmission_enabled: true,
+            learning_enabled: true,
             now: 0.0,
         }
     }
@@ -94,6 +99,16 @@ impl<N: Neuron, S: Synapse> Network<N, S> {
         }
     }
 
+    // toggle synaptic transmission (learning continues)
+    pub fn toggle_transmission(&mut self, enabled: bool) {
+        self.transmission_enabled = enabled;
+    }
+
+    // toggle synaptic updates
+    pub fn toggle_learning(&mut self, enabled: bool) {
+        self.learning_enabled = enabled;
+    }
+
     pub fn tick(&mut self, ticks: usize, inputs: &[Float], outputs: &mut [Float]) -> Float {
         // let mut post_recv_count = 0;
         // let mut pre_recv_count = 0;
@@ -122,12 +137,14 @@ impl<N: Neuron, S: Synapse> Network<N, S> {
                 neuron.reset();
 
                 // On the incoming (receiving synapses), update them post-receival
-                if let Some(recv_synapses) = self.recv_synapses.get_mut(&sendr_id) {
-                    // println!("recv_synapses: sendr_id: {:?} recv_synapses: {:?}", sendr_id, recv_synapses.len());
-                    for synapse_id in recv_synapses.iter() {
-                        if let Some(synapse) = self.synapses.get_mut(&synapse_id) {
-                            synapse.post_recv(self.now);
-                            // post_recv_count += 1;
+                if self.learning_enabled {
+                    if let Some(recv_synapses) = self.recv_synapses.get_mut(&sendr_id) {
+                        // println!("recv_synapses: sendr_id: {:?} recv_synapses: {:?}", sendr_id, recv_synapses.len());
+                        for synapse_id in recv_synapses.iter() {
+                            if let Some(synapse) = self.synapses.get_mut(&synapse_id) {
+                                synapse.post_recv(self.now);
+                                // post_recv_count += 1;
+                            }
                         }
                     }
                 }
@@ -137,14 +154,18 @@ impl<N: Neuron, S: Synapse> Network<N, S> {
                     // println!("send_synapses: sendr_id: {:?} send_synapses: {:?}", sendr_id, send_synapses.len());
                     for &(recvr_id, synapse_id) in send_synapses.iter() {
                         if let Some(synapse) = self.synapses.get_mut(&synapse_id) {
-                            synapse.pre_recv(self.now);
-                            // pre_recv_count += 1;
+                            if self.learning_enabled {
+                                synapse.pre_recv(self.now);
+                                // pre_recv_count += 1;
+                            }
 
-                            let spike = Spike{
-                                recvr_id: recvr_id,
-                                v:        synapse.weight(),
-                            };
-                            self.scheduler.schedule(synapse.delay(), spike);
+                            if self.transmission_enabled {
+                                let spike = Spike{
+                                    recvr_id: recvr_id,
+                                    v:        synapse.weight(),
+                                };
+                                self.scheduler.schedule(synapse.delay(), spike);
+                            }
                         }
                     }
                 }

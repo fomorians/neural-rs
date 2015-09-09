@@ -36,6 +36,18 @@ pub extern fn GetSynapseCount(network: *mut SymNetwork) -> usize {
 }
 
 #[no_mangle]
+pub extern fn ToggleTransmission(network: *mut SymNetwork, enabled: bool) {
+  let mut _network = unsafe { &mut *network };
+  _network.toggle_transmission(enabled);
+}
+
+#[no_mangle]
+pub extern fn ToggleLearning(network: *mut SymNetwork, enabled: bool) {
+  let mut _network = unsafe { &mut *network };
+  _network.toggle_learning(enabled);
+}
+
+#[no_mangle]
 pub extern fn DumpWeights(network: *mut SymNetwork, weights_ptr: *mut Float) {
   let mut _network = unsafe { &mut *network };
   let mut weights = unsafe { std::slice::from_raw_parts_mut(weights_ptr, _network.get_synapse_count()) };
