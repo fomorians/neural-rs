@@ -57,17 +57,17 @@ fn test_exp_trace_nearest_neighbor() {
   trace.update(1.0, 1.0);
 
   val = trace.read(2.0);
-  assert_eq!(val, 0.36787944117144233);
+  assert_eq!(val, 0.36769915);
 
   trace.update(1.0, 2.0);
 
   val = trace.read(3.0);
-  assert_eq!(val, 0.36787944117144233);
+  assert_eq!(val, 0.36769915);
 
   trace.update(1.0, 3.0);
 
   val = trace.read(4.0);
-  assert_eq!(val, 0.36787944117144233);
+  assert_eq!(val, 0.36769915);
 }
 
 #[test]
@@ -78,15 +78,15 @@ fn test_exp_trace_all_to_all() {
   trace.update(1.0, 1.0);
 
   val = trace.read(2.0);
-  assert_eq!(val, 0.36787944117144233);
+  assert_eq!(val, 0.36769915);
 
   trace.update(1.0, 2.0);
 
   val = trace.read(3.0);
-  assert_eq!(val, 0.503214724408055);
+  assert_eq!(val, 0.5029018);
 
   trace.update(1.0, 3.0);
 
   val = trace.read(4.0);
-  assert_eq!(val, 0.553001792775919);
+  assert_eq!(val, 0.5526157);
 }
