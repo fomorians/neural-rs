@@ -1,6 +1,7 @@
 use Float;
 use synapse::Synapse;
 use sym::config::SymConfig;
+use fastexp::FastExp;
 
 #[derive(Debug, Clone, Copy)]
 pub struct SymSynapse {
@@ -37,7 +38,7 @@ impl SymSynapse {
 
   fn get_delta(&self) -> Float {
     let dt = self.post_time - self.pre_time;
-    self.a_sym * (1.0 - (dt / self.tau_a).powi(2)) * (-dt.abs() / self.tau_b).exp()
+    self.a_sym * (1.0 - (dt / self.tau_a).powi(2)) * (-dt.abs() / self.tau_b).fastexp()
   }
 
   fn integrate(&mut self, delta: Float) {

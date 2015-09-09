@@ -6,6 +6,7 @@ pub use self::synapse::Synapse;
 pub use self::trace::Trace;
 
 pub type Float = f32;
+pub mod fastexp;
 
 pub mod network;
 pub mod neuron;
