@@ -144,7 +144,7 @@ impl<N: Neuron, S: Synapse> Network<N, S> {
                                 recvr_id: recvr_id,
                                 v:        synapse.weight(),
                             };
-                            self.scheduler.schedule(synapse.delay(), spike);
+                            self.scheduler.schedule(synapse.delay() - 1, spike);
                         }
                     }
                 }
