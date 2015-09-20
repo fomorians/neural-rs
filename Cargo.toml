@@ -8,6 +8,7 @@ authors = [ "jim@barkingmousestudio.com" ]
 wheel_timer = "*"
 rand = "*"
 vec_map = "*"
+num = "*"
 
 [dev-dependencies]
 csv = "*"

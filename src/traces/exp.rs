@@ -1,5 +1,6 @@
 use Float;
 use trace::Trace;
+use fastexp::FastExp;
 
 // More accurate and matches references but slower due to exp.
 
@@ -25,7 +26,7 @@ impl Trace for ExpTrace {
     if self.last_time != 0.0 {
       // half-life decay
       let diff = now - self.last_time;
-      self.value *= (-1.0 * diff / self.half_life).exp();
+      self.value *= (-1.0 * diff / self.half_life).fastexp();
     }
 
     self.last_time = now;
