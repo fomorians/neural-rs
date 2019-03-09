@@ -1,19 +1,12 @@
-#![feature(convert)]
-
 extern crate neural;
-extern crate rand;
 
 use std::default::Default;
-// use rand::{Rng, SeedableRng, StdRng};
 
 use neural::Network;
 use neural::izhikevich::{IzhikevichNeuron, IzhikevichConfig};
 use neural::sym::{SymSynapse, SymConfig};
 
 fn main() {
-  // let seed: &[_] = &[1, 2, 3, 4];
-  // let mut rng: StdRng = SeedableRng::from_seed(seed);
-  // let mut rng = rand::thread_rng();
 
   let mut network = Network::<IzhikevichNeuron, SymSynapse>::new(20);
   let duration = 20.0;

@@ -90,7 +90,6 @@ fn bench_network_tick_all_to_all(bn: &mut Bencher) {
 
 #[bench]
 fn bench_network_tick_limited(bn: &mut Bencher) {
-  //let seed: &[_] = &[1, 2, 3, 4];
   let mut rng = Hc128Rng::seed_from_u64(1234);
   let mut network = Network::new(20);
 

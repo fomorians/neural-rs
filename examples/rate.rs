@@ -1,11 +1,10 @@
-#![feature(iter_arith)]
-#![feature(convert)]
-
 extern crate neural;
 extern crate csv;
 extern crate rand;
+extern crate rand_hc;
 
-use rand::{Rng, SeedableRng, StdRng};
+use rand::prelude::*;
+use rand_hc::Hc128Rng;
 
 use neural::Network;
 use neural::izhikevich::{IzhikevichNeuron, IzhikevichConfig};
@@ -30,8 +29,7 @@ fn main() {
   let inp = vinp.as_mut_slice();
   let oup = voup.as_mut_slice();
 
-  let seed: &[_] = &[1, 2, 3, 4];
-  let mut rng: StdRng = SeedableRng::from_seed(seed);
+  let mut rng = Hc128Rng::seed_from_u64(1234);
 
   let rate = 500.0;
   let dt = 1.0 / 1000.0; // 1ms
