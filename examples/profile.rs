@@ -1,4 +1,3 @@
-#![feature(convert)]
 
 extern crate neural;
 extern crate csv;
@@ -18,12 +17,12 @@ fn main() {
   fs::create_dir_all(&path).ok();
 
   let filepath_profile = path.join("profile.csv");
-  let mut writer_profile = csv::Writer::from_file(filepath_profile.as_path()).unwrap();
-  writer_profile.encode(("t", "i")).ok();
+  let mut writer_profile = csv::Writer::from_path(filepath_profile.as_path()).unwrap();
+  writer_profile.serialize(("t", "i")).ok();
 
   let filepath_rate = path.join("profile_rate.csv");
-  let mut writer_rate = csv::Writer::from_file(filepath_rate.as_path()).unwrap();
-  writer_rate.encode(("t", "rate")).ok();
+  let mut writer_rate = csv::Writer::from_path(filepath_rate.as_path()).unwrap();
+  writer_rate.serialize(("t", "rate")).ok();
 
   let mut network = Network::new(20);
 
@@ -89,11 +88,11 @@ fn main() {
 
     let rate = oup.iter().filter(|&x| *x > 0.0).count();
     println!("{:?}", (now, rate));
-    writer_rate.encode((now, rate)).unwrap();
+    writer_rate.serialize((now, rate)).unwrap();
 
     for (n, &i) in oup.iter().enumerate() {
       if i > 0.0 {
-        writer_profile.encode((now, n)).unwrap();
+        writer_profile.serialize((now, n)).unwrap();
       }
     }
   }

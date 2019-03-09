@@ -1,13 +1,13 @@
-#![feature(convert)]
-
 extern crate neural;
 extern crate rand;
+extern crate rand_hc;
 extern crate csv;
 
 use std::default::Default;
 use std::path::Path;
 use std::fs;
-use rand::{Rng, SeedableRng, StdRng};
+use rand::prelude::*;
+use rand_hc::Hc128Rng;
 
 use neural::Network;
 use neural::izhikevich::{IzhikevichNeuron, IzhikevichConfig};
@@ -20,15 +20,14 @@ fn main() {
   fs::create_dir_all(&path).ok();
 
   let filepath_spikes = path.join("stdp.csv");
-  let mut writer_spikes = csv::Writer::from_file(filepath_spikes.as_path()).unwrap();
-  writer_spikes.encode(("t", "i")).ok();
+  let mut writer_spikes = csv::Writer::from_path(filepath_spikes.as_path()).unwrap();
+  writer_spikes.serialize(("t", "i")).ok();
 
   let filepath_rate = path.join("stdp_rate.csv");
-  let mut writer_rate = csv::Writer::from_file(filepath_rate.as_path()).unwrap();
-  writer_rate.encode(("t", "rate")).ok();
+  let mut writer_rate = csv::Writer::from_path(filepath_rate.as_path()).unwrap();
+  writer_rate.serialize(("t", "rate")).ok();
 
-  let seed: &[_] = &[1, 2, 3, 4];
-  let mut rng: StdRng = SeedableRng::from_seed(seed);
+  let mut rng = Hc128Rng::seed_from_u64(1234);
   let mut network = Network::new(20);
 
   let duration = 1000.0;
@@ -82,7 +81,7 @@ fn main() {
     let mut i = 0;
 
     while i < connectivity {
-      let m = rng.gen_range::<usize>(0, total_count);
+      let m: usize = rng.gen_range(0, total_count);
       if n == m { // try again
         continue;
       }
@@ -93,8 +92,8 @@ fn main() {
         -5.0
       };
 
-      let delay = if n < excitatory_count {
-        rng.gen_range::<usize>(1, max_delay)
+      let delay: usize = if n < excitatory_count {
+        rng.gen_range(1, max_delay)
       } else {
         1
       };
@@ -145,11 +144,11 @@ fn main() {
 
     let rate = oup.iter().filter(|&x| *x > 0.0).count();
     println!("{:?}", (now, rate));
-    writer_rate.encode((now, rate)).unwrap();
+    writer_rate.serialize((now, rate)).unwrap();
 
     for (n, &i) in oup.iter().enumerate() {
       if i > 0.0 {
-        writer_spikes.encode((now, n)).unwrap();
+        writer_spikes.serialize((now, n)).unwrap();
       }
     }
   }

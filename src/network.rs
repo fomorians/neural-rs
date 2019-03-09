@@ -66,7 +66,7 @@ impl<N: Neuron, S: Synapse> Network<N, S> {
     }
 
     pub fn add_synapse(&mut self, synapse: S, sendr_id: usize, recvr_id: usize) -> Result<usize, NeuralError> {
-        if !self.neurons.contains_key(&sendr_id) || !self.neurons.contains_key(&recvr_id) {
+        if !self.neurons.contains_key(sendr_id) || !self.neurons.contains_key(recvr_id) {
             return Err(NeuralError::MissingNeuron)
         }
 
@@ -118,7 +118,7 @@ impl<N: Neuron, S: Synapse> Network<N, S> {
         for current_tick in 0..ticks {
             let spikes = self.scheduler.tick();
             for spike in spikes.iter() {
-                if let Some(neuron) = self.neurons.get_mut(&spike.recvr_id) {
+                if let Some(neuron) = self.neurons.get_mut(spike.recvr_id) {
                     neuron.recv(spike.v);
                 }
             }
@@ -138,10 +138,10 @@ impl<N: Neuron, S: Synapse> Network<N, S> {
 
                 // On the incoming (receiving synapses), update them post-receival
                 if self.learning_enabled {
-                    if let Some(recv_synapses) = self.recv_synapses.get_mut(&sendr_id) {
+                    if let Some(recv_synapses) = self.recv_synapses.get_mut(sendr_id) {
                         // println!("recv_synapses: sendr_id: {:?} recv_synapses: {:?}", sendr_id, recv_synapses.len());
                         for synapse_id in recv_synapses.iter() {
-                            if let Some(synapse) = self.synapses.get_mut(&synapse_id) {
+                            if let Some(synapse) = self.synapses.get_mut(*synapse_id) {
                                 synapse.post_recv(self.now);
                                 // post_recv_count += 1;
                             }
@@ -150,10 +150,10 @@ impl<N: Neuron, S: Synapse> Network<N, S> {
                 }
 
                 // On the outgoing (sending synapses), update them pre-receival
-                if let Some(send_synapses) = self.send_synapses.get_mut(&sendr_id) {
+                if let Some(send_synapses) = self.send_synapses.get_mut(sendr_id) {
                     // println!("send_synapses: sendr_id: {:?} send_synapses: {:?}", sendr_id, send_synapses.len());
                     for &(recvr_id, synapse_id) in send_synapses.iter() {
-                        if let Some(synapse) = self.synapses.get_mut(&synapse_id) {
+                        if let Some(synapse) = self.synapses.get_mut(synapse_id) {
                             if self.learning_enabled {
                                 synapse.pre_recv(self.now);
                                 // pre_recv_count += 1;

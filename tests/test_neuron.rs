@@ -32,8 +32,8 @@ fn run(t: Test) {
 
   let filepath = path.join(&format!("{}.csv", t.name));
 
-  let mut writer = csv::Writer::from_file(&filepath.as_path()).unwrap();
-  writer.encode(("t", "I", "V", "u", "spike")).ok();
+  let mut writer = csv::Writer::from_path(&filepath.as_path()).unwrap();
+  writer.serialize(("t", "I", "V", "u", "spike")).ok();
 
   while now < t.timespan {
     let ip = (t.input)(now);
@@ -46,7 +46,7 @@ fn run(t: Test) {
       spikes = spikes + 1;
     }
 
-    writer.encode((now, ip, neuron.v, neuron.u, spike)).ok();
+    writer.serialize((now, ip, neuron.v, neuron.u, spike)).ok();
 
     now = now + t.tau;
   }

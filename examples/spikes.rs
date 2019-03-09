@@ -1,14 +1,14 @@
-#![feature(convert)]
-
 extern crate neural;
 extern crate rand;
+extern crate rand_hc;
 extern crate csv;
 
 use std::default::Default;
 use std::path::Path;
 use std::fs;
-use rand::{Rng, SeedableRng, StdRng};
-use rand::distributions::{Normal, IndependentSample};
+use rand::prelude::*;
+use rand_hc::Hc128Rng;
+use rand::distributions::Normal;
 
 use neural::Float;
 use neural::Network;
@@ -22,15 +22,14 @@ fn main() {
   fs::create_dir_all(&path).ok();
 
   let filepath_spikes = path.join("spikes.csv");
-  let mut writer_spikes = csv::Writer::from_file(filepath_spikes.as_path()).unwrap();
-  writer_spikes.encode(("t", "i")).ok();
+  let mut writer_spikes = csv::Writer::from_path(filepath_spikes.as_path()).unwrap();
+  writer_spikes.serialize(("t", "i")).ok();
 
   let filepath_rate = path.join("spikes_rate.csv");
-  let mut writer_rate = csv::Writer::from_file(filepath_rate.as_path()).unwrap();
-  writer_rate.encode(("t", "rate")).ok();
+  let mut writer_rate = csv::Writer::from_path(filepath_rate.as_path()).unwrap();
+  writer_rate.serialize(("t", "rate")).ok();
 
-  let seed: &[_] = &[1, 2, 3, 4];
-  let mut rng: StdRng = SeedableRng::from_seed(seed);
+  let mut rng = Hc128Rng::seed_from_u64(1234);
   let mut network = Network::new(20);
 
   let duration = 1000.0;
@@ -117,9 +116,9 @@ fn main() {
     for n in 0..total_count {
       // thalmic input
       let i = if n < excitatory_count {
-        5.0 * norm.ind_sample(&mut rng)
+        5.0 * norm.sample(&mut rng)
       } else {
-        2.0 * norm.ind_sample(&mut rng)
+        2.0 * norm.sample(&mut rng)
       };
 
       inp[n] = i as Float;
@@ -134,11 +133,11 @@ fn main() {
 
     let rate = oup.iter().filter(|&x| *x > 0.0).count();
     println!("{:?}", (now, rate));
-    writer_rate.encode((now, rate)).unwrap();
+    writer_rate.serialize((now, rate)).unwrap();
 
     for (n, &i) in oup.iter().enumerate() {
       if i > 0.0 {
-        writer_spikes.encode((now, n)).unwrap();
+        writer_spikes.serialize((now, n)).unwrap();
       }
     }
   }

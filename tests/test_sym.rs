@@ -18,9 +18,9 @@ fn test_sym_ltp() {
   fs::create_dir_all(&path).ok();
 
   let filepath = path.join("sym_ltp.csv");
-  let mut writer = csv::Writer::from_file(filepath.as_path()).unwrap();
+  let mut writer = csv::Writer::from_path(filepath.as_path()).unwrap();
 
-  writer.encode(("t", "d")).ok();
+  writer.serialize(("t", "d")).ok();
 
   let mut tau = 0.0;
   while tau < 50.0 {
@@ -37,7 +37,7 @@ fn test_sym_ltp() {
     now = now + tau;
     let delta = synapse.post_recv(now);
 
-    writer.encode((-1.0 * tau, delta)).ok();
+    writer.serialize((-1.0 * tau, delta)).ok();
     tau = tau + 0.1;
   }
 }
@@ -49,9 +49,9 @@ fn test_sym_ltd() {
   fs::create_dir_all(&path).ok();
 
   let filepath = path.join("sym_ltd.csv");
-  let mut writer = csv::Writer::from_file(&filepath.as_path()).unwrap();
+  let mut writer = csv::Writer::from_path(&filepath.as_path()).unwrap();
 
-  writer.encode(("t", "d")).ok();
+  writer.serialize(("t", "d")).ok();
 
   let mut tau = 0.0;
   while tau < 50.0 {
@@ -68,7 +68,7 @@ fn test_sym_ltd() {
     now = now + tau;
     let delta = synapse.pre_recv(now);
 
-    writer.encode((tau, delta)).ok();
+    writer.serialize((tau, delta)).ok();
     tau = tau + 0.1;
   }
 }

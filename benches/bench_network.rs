@@ -1,14 +1,15 @@
 #![feature(test)]
-#![feature(convert)]
 
 extern crate test;
 extern crate neural;
 extern crate rand;
+extern crate rand_hc;
 
 use test::Bencher;
 
 use std::default::Default;
-use rand::{Rng, SeedableRng, StdRng};
+use rand::prelude::*;
+use rand_hc::Hc128Rng;
 
 use neural::Network;
 use neural::izhikevich::{IzhikevichNeuron, IzhikevichConfig};
@@ -89,8 +90,7 @@ fn bench_network_tick_all_to_all(bn: &mut Bencher) {
 
 #[bench]
 fn bench_network_tick_limited(bn: &mut Bencher) {
-  let seed: &[_] = &[1, 2, 3, 4];
-  let mut rng: StdRng = SeedableRng::from_seed(seed);
+  let mut rng = Hc128Rng::seed_from_u64(1234);
   let mut network = Network::new(20);
 
   let total_count = 100;
@@ -119,7 +119,7 @@ fn bench_network_tick_limited(bn: &mut Bencher) {
     let mut i = 0;
 
     while i < connectivity {
-      let m = rng.gen_range::<usize>(0, total_count);
+      let m: usize = rng.gen_range(0, total_count);
       if n == m { // try again
         continue;
       }
