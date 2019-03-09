@@ -45,7 +45,7 @@ fn test_network() {
     let now = network.tick(1, &mut inp, &mut oup);
     assert_eq!(now, 2.0);
     assert_eq!(oup[0], 0.0);
-    assert_eq!(oup[1], 0.0);
+    assert_eq!(oup[1], 30.0);
   }
 
   {
@@ -54,7 +54,7 @@ fn test_network() {
     let now = network.tick(1, &mut inp, &mut oup);
     assert_eq!(now, 3.0);
     assert_eq!(oup[0], 0.0);
-    assert_eq!(oup[1], 30.0);
+    assert_eq!(oup[1], 0.0);
   }
 
   {
